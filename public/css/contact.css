@@ -1,0 +1,120 @@
+/* ==========================================================================
+   Artiva — contact page
+   ========================================================================== */
+
+.contact-page {
+    padding: clamp(26px, 4vw, 50px) 0 clamp(40px, 6vw, 72px);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+}
+
+.contact-info {
+    display: grid;
+    gap: 16px;
+}
+
+.contact-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.contact-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(76, 142, 213, 0.12);
+    color: var(--sky);
+    font-size: 1.1rem;
+    flex: 0 0 auto;
+}
+
+.contact-card h3 {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+    margin-bottom: 5px;
+}
+
+.contact-card p,
+.contact-card a {
+    color: var(--navy);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.contact-card a:hover {
+    color: var(--sky);
+}
+
+.contact-form-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: clamp(24px, 4vw, 36px);
+    box-shadow: var(--shadow-sm);
+}
+
+.contact-form-card h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.7rem;
+    margin-bottom: 8px;
+}
+
+.contact-form-card > p {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin-bottom: 24px;
+}
+
+.contact-map {
+    margin-top: 18px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: linear-gradient(140deg, var(--navy), var(--sky));
+    color: var(--ivory);
+    padding: 26px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.contact-map i {
+    font-size: 1.6rem;
+    color: var(--lavender);
+}
+
+.contact-map strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.contact-map span {
+    color: rgba(242, 243, 238, 0.72);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 991.98px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Artiva — wishlist
+   ========================================================================== */
+
+.wishlist-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+}
+
+.wishlist-head h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    letter-spacing: -0.02em;
+}
+
+.wishlist-head p {
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+@media (max-width: 991.98px) {
+    .wishlist-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .wishlist-grid {
+        grid-template-columns: 1fr;
+    }
+}

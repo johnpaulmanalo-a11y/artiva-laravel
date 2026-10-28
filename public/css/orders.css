@@ -1,0 +1,233 @@
+/* ==========================================================================
+   Artiva — order history and order details
+   ========================================================================== */
+
+.orders-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.orders-tab {
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--muted);
+    transition: all 0.2s ease;
+}
+
+.orders-tab:hover {
+    color: var(--navy);
+    border-color: var(--line-strong);
+}
+
+.orders-tab.is-active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--ivory);
+}
+
+.order-list {
+    display: grid;
+    gap: 14px;
+}
+
+.order-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr auto;
+    gap: 20px;
+    align-items: center;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.order-card:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.order-card__number {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.order-card__date {
+    font-size: 0.83rem;
+    color: var(--muted-soft);
+}
+
+.order-card__label {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+    margin-bottom: 5px;
+}
+
+.order-card__value {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--ink);
+}
+
+.order-detail {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 26px;
+    align-items: start;
+}
+
+.order-number {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 500;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+
+.order-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.order-meta-grid h3 {
+    font-family: var(--font-heading);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+    margin-bottom: 6px;
+}
+
+.order-meta-grid p {
+    font-size: 0.9rem;
+    color: var(--ink);
+    line-height: 1.6;
+}
+
+.order-line {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.order-line:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.order-line__thumb {
+    width: 56px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(150deg, var(--navy), var(--sky));
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    color: var(--ivory);
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+}
+
+.order-line__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-line__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.order-line__title {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    color: var(--navy);
+    display: block;
+    line-height: 1.3;
+}
+
+.order-line__meta {
+    font-family: var(--font-heading);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+    margin-top: 2px;
+}
+
+.order-line__price {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.payment-record {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.86rem;
+}
+
+.payment-record:last-child {
+    border-bottom: 0;
+}
+
+.payment-record__id {
+    font-family: var(--font-heading);
+    font-size: 0.76rem;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+}
+
+.payment-record__meta {
+    font-size: 0.76rem;
+    color: var(--muted-soft);
+}
+
+@media (max-width: 991.98px) {
+    .order-card {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .order-detail {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .order-card {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .order-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}

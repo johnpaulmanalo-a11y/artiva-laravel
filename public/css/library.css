@@ -1,0 +1,155 @@
+/* ==========================================================================
+   Artiva — purchased artwork library
+   ========================================================================== */
+
+.library-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+}
+
+.library-head h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    letter-spacing: -0.02em;
+}
+
+.library-head p {
+    color: var(--muted);
+    margin-top: 8px;
+    max-width: 560px;
+}
+
+.library-note {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    padding: 16px 18px;
+    background: rgba(76, 142, 213, 0.07);
+    border: 1px solid rgba(76, 142, 213, 0.18);
+    border-radius: var(--radius);
+    color: #315A82;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.library-note i {
+    color: var(--sky);
+    font-size: 1.05rem;
+    margin-top: 2px;
+}
+
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.library-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.library-card__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: linear-gradient(150deg, var(--navy), var(--sky));
+}
+
+.library-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.library-card__media span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    color: var(--ivory);
+    opacity: 0.85;
+}
+
+.library-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(242, 243, 238, 0.94);
+    color: var(--navy);
+    font-family: var(--font-heading);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    z-index: 1;
+}
+
+.library-card__body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.library-card__title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--navy);
+}
+
+.library-card__meta {
+    font-family: var(--font-heading);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+}
+
+.library-card__file {
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.library-card__actions {
+    margin-top: auto;
+    padding-top: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.library-card__actions .btn {
+    flex: 1;
+}
+
+@media (max-width: 991.98px) {
+    .library-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .library-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,193 @@
+/* ==========================================================================
+   Artiva — shopping cart
+   Page shell, headings and the summary card live in app.css.
+   ========================================================================== */
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 28px;
+    align-items: start;
+}
+
+.cart-list {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.cart-list__head {
+    display: grid;
+    grid-template-columns: 1fr 120px 46px;
+    gap: 16px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+    background: rgba(16, 38, 77, 0.02);
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 1fr 120px 46px;
+    gap: 16px;
+    padding: 20px 22px;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+}
+
+.cart-item:last-child {
+    border-bottom: 0;
+}
+
+.cart-item__main {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    min-width: 0;
+}
+
+.cart-item__thumb {
+    width: 74px;
+    height: 92px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: linear-gradient(150deg, var(--navy), var(--sky));
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+}
+
+.cart-item__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item__thumb span {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    color: var(--ivory);
+    opacity: 0.85;
+}
+
+.cart-item__title {
+    font-family: var(--font-display);
+    font-size: 1.12rem;
+    font-weight: 500;
+    line-height: 1.25;
+    margin-bottom: 3px;
+}
+
+.cart-item__title a {
+    color: var(--navy);
+}
+
+.cart-item__title a:hover {
+    color: var(--sky);
+}
+
+.cart-item__meta {
+    font-family: var(--font-heading);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cart-item__licence {
+    margin-top: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    color: var(--sky);
+}
+
+.cart-item__price {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.98rem;
+}
+
+.cart-item__remove {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    color: var(--muted-soft);
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.cart-item__remove:hover {
+    color: var(--danger);
+    border-color: rgba(179, 64, 47, 0.35);
+    background: rgba(179, 64, 47, 0.05);
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.cart-clear {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-family: var(--font-heading);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-soft);
+}
+
+.cart-clear:hover {
+    color: var(--danger);
+}
+
+@media (max-width: 991.98px) {
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        position: static;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .cart-list__head {
+        display: none;
+    }
+
+    .cart-item {
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        padding: 16px;
+    }
+
+    .cart-item__price {
+        grid-column: 1 / 2;
+        padding-left: 90px;
+    }
+
+    .cart-item__remove {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+}

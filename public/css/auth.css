@@ -1,0 +1,311 @@
+/* ==========================================================================
+   Artiva — authentication layout
+   ========================================================================== */
+
+.guest-body {
+    background: var(--ivory);
+    min-height: 100vh;
+}
+
+.guest-shell {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    min-height: 100vh;
+}
+
+/* ---------- Art side ---------- */
+
+.guest-art {
+    background:
+        radial-gradient(circle at 78% 12%, rgba(76, 142, 213, 0.45), transparent 42%),
+        radial-gradient(circle at 12% 88%, rgba(210, 207, 224, 0.24), transparent 46%),
+        linear-gradient(150deg, var(--night), var(--navy) 55%, #1E3C6B);
+    color: var(--ivory);
+    padding: clamp(32px, 5vw, 64px);
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    overflow: hidden;
+}
+
+.guest-art::after {
+    content: 'A';
+    position: absolute;
+    right: -40px;
+    bottom: -120px;
+    font-family: var(--font-display);
+    font-size: 26rem;
+    line-height: 1;
+    color: rgba(242, 243, 238, 0.04);
+    pointer-events: none;
+}
+
+.guest-art__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 480px;
+}
+
+.guest-art__copy {
+    margin-top: auto;
+}
+
+.guest-art__headline {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 3.4vw, 2.9rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ivory);
+    margin-bottom: 16px;
+}
+
+.guest-art__text {
+    color: rgba(242, 243, 238, 0.66);
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: 400px;
+}
+
+.guest-art__points {
+    display: grid;
+    gap: 14px;
+    margin-top: 32px;
+}
+
+.guest-art__points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: rgba(242, 243, 238, 0.78);
+}
+
+.guest-art__points i {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: rgba(242, 243, 238, 0.08);
+    color: var(--lavender);
+    font-size: 0.95rem;
+    flex: 0 0 auto;
+}
+
+.guest-art__quote {
+    margin-top: auto;
+    padding-top: 28px;
+    border-top: 1px solid rgba(242, 243, 238, 0.14);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(242, 243, 238, 0.7);
+    line-height: 1.7;
+}
+
+.guest-art__quote span {
+    color: var(--ivory);
+}
+
+/* ---------- Panel side ---------- */
+
+.guest-panel {
+    padding: clamp(24px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.guest-panel__top {
+    position: absolute;
+    top: clamp(20px, 3vw, 32px);
+    right: clamp(20px, 3vw, 40px);
+}
+
+.guest-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.guest-back:hover {
+    color: var(--navy);
+}
+
+.guest-card {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: clamp(28px, 4vw, 44px);
+    box-shadow: var(--shadow-lg);
+}
+
+.guest-card__head {
+    margin-bottom: 26px;
+}
+
+.guest-card__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.7rem, 2.6vw, 2.15rem);
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 8px;
+}
+
+.guest-card__subtitle {
+    color: var(--muted);
+    font-size: 0.93rem;
+}
+
+.guest-card__foot {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.guest-card__foot a {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--navy);
+    border-bottom: 1px solid transparent;
+}
+
+.guest-card__foot a:hover {
+    border-color: var(--sky);
+    color: var(--sky);
+}
+
+.auth-form {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-form__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.auth-form__link {
+    font-family: var(--font-heading);
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    color: var(--sky);
+    font-weight: 600;
+}
+
+.auth-form__link:hover {
+    color: var(--navy);
+}
+
+.auth-hint {
+    background: rgba(76, 142, 213, 0.07);
+    border: 1px solid rgba(76, 142, 213, 0.18);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    color: #315A82;
+    line-height: 1.6;
+    display: flex;
+    gap: 9px;
+}
+
+.auth-hint i {
+    color: var(--sky);
+    margin-top: 2px;
+}
+
+.auth-demo {
+    margin-top: 18px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: rgba(16, 38, 77, 0.02);
+}
+
+.auth-demo strong {
+    color: var(--navy);
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.auth-demo code {
+    color: var(--ink);
+    background: rgba(16, 38, 77, 0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+}
+
+.guest-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--muted-soft);
+    font-family: var(--font-heading);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.guest-divider::before,
+.guest-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+@media (max-width: 991.98px) {
+    .guest-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .guest-art {
+        display: none;
+    }
+
+    .guest-panel {
+        min-height: 100vh;
+        padding-top: 64px;
+    }
+
+    .guest-panel__top {
+        top: 20px;
+        right: 20px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .guest-card {
+        padding: 26px 22px;
+        border-radius: var(--radius-lg);
+    }
+}
