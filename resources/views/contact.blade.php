@@ -24,7 +24,7 @@
                         <div class="contact-card__icon"><i class="bi bi-envelope"></i></div>
                         <div>
                             <h3>Email</h3>
-                            <a href="mailto:hello@artiva.test">hello@artiva.test</a>
+                            <a href="mailto:jpcomes.globalmktg@gmail.com">jpcomes.globalmktg@gmail.com</a>
                             <p class="text-muted-soft" style="font-size: 0.82rem; margin-top: 4px;">Replies within two business days.</p>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <div class="contact-card__icon"><i class="bi bi-life-preserver"></i></div>
                         <div>
                             <h3>Order support</h3>
-                            <a href="mailto:support@artiva.test">support@artiva.test</a>
+                            <a href="mailto:jpcomes.globalmktg@gmail.com">jpcomes.globalmktg@gmail.com</a>
                             <p class="text-muted-soft" style="font-size: 0.82rem; margin-top: 4px;">Include your order number (ART-…) so we can help faster.</p>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                         <div class="contact-card__icon"><i class="bi bi-briefcase"></i></div>
                         <div>
                             <h3>Artist submissions</h3>
-                            <a href="mailto:artists@artiva.test">artists@artiva.test</a>
+                            <a href="mailto:jpcomes.globalmktg@gmail.com">jpcomes.globalmktg@gmail.com</a>
                             <p class="text-muted-soft" style="font-size: 0.82rem; margin-top: 4px;">Send a portfolio link and a short note about your work.</p>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <i class="bi bi-geo-alt"></i>
                         <div>
                             <strong>Artiva Studio</strong>
-                            <span>12 Gallery Lane, Suite 3 · Open Monday to Friday, 9am – 5pm</span>
+                            <span>12 Gallery Lane, Suite 3 · Open Monday to Sunday, 9am – 5pm</span>
                         </div>
                     </div>
                 </div>

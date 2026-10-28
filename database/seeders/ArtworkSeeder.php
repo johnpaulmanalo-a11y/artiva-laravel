@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class ArtworkSeeder extends Seeder
 {
     /**
-     * Each seeded artwork gets a generated SVG preview on the public disk and
+     * Each seeded artwork gets a generated JPG preview on the public disk and
      * a matching master file on the private disk, so browsing, purchasing and
      * downloading all work end-to-end in the demo.
      */
@@ -20,38 +20,55 @@ class ArtworkSeeder extends Seeder
         $artworks = [
             ['Jp', 'Pixel Characters', 'John Paul Manalo', 38.00,
     'A portrait study in warm neutrals, built from layered brushwork and light.',
-    'jp.jpg'],
+    'images/jep.jpg'],
 
             ['captain valor', 'Pixel Characters', 'John Paul Manalo', 65.00,
     'A decorated captain rendered in bold shapes and navy shadow.',
-    'captain-valor.jpg'],
+    'images/captain valor.jpg'],
 
             ['archery', 'Pixel Characters', 'John Paul Manalo', 52.50,
     'Focus, breath and release — a concept piece for a forest tournament.',
-    'archery.jpg'],
+    'images/archery.jpg'],
 
             ['dan the boss', 'Pixel Characters', 'John Paul Manalo', 72.00,
     'The boss of the block, illustrated with hard light and brass accents.',
-    'dan-the-boss.jpg'],
+    'images/dan the boss.jpg'],
 
      ['kai', 'Pixel Characters', 'John Paul Manalo', 72.00,
     'The boss of the block, illustrated with hard light and brass accents.',
-    'kai.jpg'],
+    'images/kai.jpg'],
 
         ];
 
-        $featured = ['Kai', 'Captain Valor', 'Dan - The Boss', 'Archery', 'Jp',];
+        $featured = ['Kai.jpg', 'Captain Valor.jpg', 'Dan - The Boss.jpg', 'Archery.jpg', 'Jp.jpg'];
 
        foreach ($artworks as $index => [$title, $categoryName, $artist, $price, $description, $image]) {
             $category = Category::where('name', $categoryName)->firstOrFail();
             $slug = Str::slug($title);
             $palette = $this->palette($index);
 
-            $previewPath = 'previews/'.$slug.'.svg';
-            $masterPath = 'artworks/'.$slug.'.svg';
+            $previewPath = 'previews/'.$slug.'.jpg';
+            $masterPath = 'artworks/'.$slug.'.jpg';
 
-            Storage::disk('public')->put($previewPath, $this->svg($title, $artist, $palette, true));
-            Storage::disk('local')->put($masterPath, $this->svg($title, $artist, $palette, false));
+            $sourcePath = public_path($image);
+
+if (!file_exists($sourcePath)) {
+    throw new \RuntimeException("Artwork image not found: {$sourcePath}");
+}
+
+$imageContents = file_get_contents($sourcePath);
+
+if ($imageContents === false) {
+    throw new \RuntimeException("Unable to read artwork image: {$sourcePath}");
+}
+
+// Display the actual image from the public folder.
+$previewPath = $image;
+
+// Save a private master copy for downloads.
+$masterPath = 'artworks/'.$slug.'.jpg';
+
+Storage::disk('local')->put($masterPath, $imageContents);
 
             Artwork::updateOrCreate(
                 ['slug' => $slug],
@@ -63,9 +80,9 @@ class ArtworkSeeder extends Seeder
                     'preview_path' => $previewPath,
                     'file_path' => $masterPath,
                     'price' => $price,
-                    'file_format' => 'SVG',
+                    'file_format' => 'JPG',
                     'resolution' => '3000 x 4000 px',
-                    'file_size_kb' => (int) ceil(strlen($this->svg($title, $artist, $palette, false)) / 1024) + 240,
+                    'file_size_kb' => (int) ceil(strlen($this->jpg($title, $artist, $palette, false)) / 1024) + 240,
                     'is_featured' => in_array($title, $featured, true),
                     'is_active' => true,
                 ],
@@ -89,11 +106,11 @@ class ArtworkSeeder extends Seeder
     }
 
     /**
-     * Generate a deterministic abstract composition as a standalone SVG.
+     * Generate a deterministic abstract composition as a standalone JPG.
      *
      * @param  array{0: string, 1: string, 2: string, 3: string}  $palette
      */
-    private function svg(string $title, string $artist, array $palette, bool $withLabel): string
+    private function jpg(string $title, string $artist, array $palette, bool $withLabel): string
     {
         [$ink, $accent, $soft, $ivory] = $palette;
         $seed = crc32($title);
