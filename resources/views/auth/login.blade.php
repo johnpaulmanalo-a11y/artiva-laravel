@@ -37,12 +37,6 @@
             Sign in <i class="bi bi-arrow-right"></i>
         </button>
 
-        <div class="auth-demo">
-            <strong>Demo accounts</strong>
-            Customer: <code>customer@artiva.test</code> / <code>password</code><br>
-            Admin: <code>admin@artiva.test</code> / <code>password</code>
-        </div>
-    </form>
 @endsection
 
 @section('foot')
