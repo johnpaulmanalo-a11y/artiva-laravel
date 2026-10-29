@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Order '.$order->order_number.' confirmed — Artiva')
-@section('meta_description', 'Your Artiva order is confirmed. Download your artwork from your library.')
+@section('title', 'Order '.$order->order_number.' — Artiva')
+@section('meta_description', 'Check the payment status of your Artiva order.')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/checkout.css') }}">
@@ -11,11 +11,14 @@
     <section class="page-shell">
         <div class="container">
             <div class="confirm-hero">
-                <div class="confirm-hero__icon"><i class="bi bi-check2"></i></div>
-                <h1>Thank you — your art is ready.</h1>
+                <div class="confirm-hero__icon"><i class="bi {{ $order->isPaid() ? 'bi-check2' : 'bi-hourglass-split' }}"></i></div>
+                <h1>{{ $order->isPaid() ? 'Payment verified — thank you!' : 'Order received — payment pending' }}</h1>
                 <p>
-                    Payment was approved and every artwork in this order is now unlocked in your library.
-                    A receipt has been recorded against your account.
+                    @if ($order->isPaid())
+                        Your payment has been verified. Your purchased artwork is available in your library.
+                    @else
+                        We have recorded your order, but payment has not been verified yet. Do not make another payment unless you have checked the transaction status.
+                    @endif
                 </p>
 
                 <div class="confirm-meta">
@@ -28,7 +31,7 @@
                         <strong>{{ $order->created_at->format('j M Y, g:i a') }}</strong>
                     </div>
                     <div class="confirm-meta__item">
-                        <span>Total paid</span>
+                        <span>Order total</span>
                         <strong>{{ money($order->total) }}</strong>
                     </div>
                     <div class="confirm-meta__item">
@@ -43,7 +46,7 @@
                     <div class="order-panel">
                         <div class="order-panel__head">
                             <h2>Your downloads</h2>
-                            <span class="pill pill--success"><i class="bi bi-unlock"></i> Unlocked</span>
+                            <span class="pill {{ $order->isPaid() ? "pill--success" : "pill--warning" }}"><i class="bi {{ $order->isPaid() ? "bi-unlock" : "bi-lock" }}"></i> {{ $order->isPaid() ? "Unlocked" : "Locked pending verification" }}</span>
                         </div>
 
                         @foreach ($order->items as $item)
@@ -61,7 +64,7 @@
                                     <span class="owned-item__meta">{{ $item->artist_name ?: 'Artiva artist' }} &middot; {{ money($item->price) }}</span>
                                 </div>
 
-                                @if ($item->artwork)
+                                @if ($order->isPaid() && $item->artwork)
                                     <a class="btn btn-ink btn-sm" href="{{ route('library.download', $item->artwork) }}">
                                         <i class="bi bi-download"></i> Download
                                     </a>
@@ -114,9 +117,13 @@
                             <span><span class="pill pill--success">{{ $order->statusLabel() }}</span></span>
                         </div>
 
-                        <a class="btn btn-ink btn-block" href="{{ route('library.index') }}">
-                            <i class="bi bi-collection"></i> Go to my library
-                        </a>
+                        @if ($order->isPaid())
+                            <a class="btn btn-ink btn-block" href="{{ route('library.index') }}">
+                                <i class="bi bi-collection"></i> Go to my library
+                            </a>
+                        @else
+                            <p class="text-muted-soft">Your downloads will unlock after an administrator verifies the payment.</p>
+                        @endif
 
                         <a class="summary-card__secondary" href="{{ route('artworks.index') }}">
                             Continue browsing
