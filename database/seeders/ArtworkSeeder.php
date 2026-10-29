@@ -1,3 +1,4 @@
+
 <?php
 
 namespace Database\Seeders;
@@ -19,56 +20,84 @@ class ArtworkSeeder extends Seeder
     {
         $artworks = [
             ['Jp', 'Pixel Characters', 'John Paul Manalo', 400.00,
-    'A portrait study in warm neutrals, built from layered brushwork and light.',
-    'images/jep.jpg'],
+                'A portrait study in warm neutrals, built from layered brushwork and light.',
+                'images/jep.jpg'],
 
             ['captain valor', 'Pixel Characters', 'John Paul Manalo', 400.00,
-    'A decorated captain rendered in bold shapes and navy shadow.',
-    'images/captain valor.jpg'],
+                'A decorated captain rendered in bold shapes and navy shadow.',
+                'images/captain valor.jpg'],
 
             ['archery', 'Pixel Characters', 'John Paul Manalo', 400.00,
-    'Focus, breath and release — a concept piece for a forest tournament.',
-    'images/archery.jpg'],
+                'Focus, breath and release — a concept piece for a forest tournament.',
+                'images/archery.jpg'],
 
             ['dan the boss', 'Pixel Characters', 'John Paul Manalo', 400.00,
-    'The boss of the block, illustrated with hard light and brass accents.',
-    'images/dan the boss.jpg'],
+                'The boss of the block, illustrated with hard light and brass accents.',
+                'images/dan the boss.jpg'],
 
-     ['kai', 'Pixel Characters', 'John Paul Manalo', 400.00,
-    'The boss of the block, illustrated with hard light and brass accents.',
-    'images/kai.jpg'],
+            ['kai', 'Pixel Characters', 'John Paul Manalo', 400.00,
+                'The boss of the block, illustrated with hard light and brass accents.',
+                'images/kai.jpg'],
 
+            ['Sarah', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+                'A portrait study featuring expressive features and warm colors.',
+                'images/Sarah.png'],
+
+            ['Arman', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+                'A geometric character featuring glasses and a red vest.',
+                'images/Arman.jpg'],
+
+            ['Pablo', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+                'A playful geometric character wearing a yellow shirt and blue pants.',
+                'images/Pablo.jpg'],
+
+            ['Nicole', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+                'A colorful portrait featuring blonde hair and round glasses.',
+                'images/Nicole.png'],
+
+            ['Marites', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+                'A unique character illustration with a distinctive personality.',
+                'images/marites.jpg'],
         ];
 
-        $featured = ['Kai.jpg', 'Captain Valor.jpg', 'Dan - The Boss.jpg', 'Archery.jpg', 'Jp.jpg'];
+        $featured = [
+            'Jp',
+            'captain valor',
+            'archery',
+            'dan the boss',
+            'kai',
+            'Sarah',
+            'Arman',
+            'Pablo',
+            'Nicole',
+            'Marites',
+        ];
 
-       foreach ($artworks as $index => [$title, $categoryName, $artist, $price, $description, $image]) {
+        foreach ($artworks as $index => [$title, $categoryName, $artist, $price, $description, $image]) {
             $category = Category::where('name', $categoryName)->firstOrFail();
             $slug = Str::slug($title);
             $palette = $this->palette($index);
 
-            $previewPath = 'previews/'.$slug.'.jpg';
-            $masterPath = 'artworks/'.$slug.'.jpg';
-
             $sourcePath = public_path($image);
 
-if (!file_exists($sourcePath)) {
-    throw new \RuntimeException("Artwork image not found: {$sourcePath}");
-}
+            if (!file_exists($sourcePath)) {
+                throw new \RuntimeException("Artwork image not found: {$sourcePath}");
+            }
 
-$imageContents = file_get_contents($sourcePath);
+            $imageContents = file_get_contents($sourcePath);
 
-if ($imageContents === false) {
-    throw new \RuntimeException("Unable to read artwork image: {$sourcePath}");
-}
+            if ($imageContents === false) {
+                throw new \RuntimeException("Unable to read artwork image: {$sourcePath}");
+            }
 
-// Display the actual image from the public folder.
-$previewPath = $image;
+            // Display the actual image from the public folder.
+            $previewPath = $image;
 
-// Save a private master copy for downloads.
-$masterPath = 'artworks/'.$slug.'.jpg';
+            // Save a private master copy for downloads.
+            $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+            $masterPath = 'artworks/'.$slug.'.'.$extension;
 
-Storage::disk('local')->put($masterPath, $imageContents);
+            Storage::disk('local')->put($masterPath, $imageContents);
 
             Artwork::updateOrCreate(
                 ['slug' => $slug],
@@ -80,9 +109,9 @@ Storage::disk('local')->put($masterPath, $imageContents);
                     'preview_path' => $previewPath,
                     'file_path' => $masterPath,
                     'price' => $price,
-                    'file_format' => 'JPG',
+                    'file_format' => strtoupper($extension),
                     'resolution' => '3000 x 4000 px',
-                    'file_size_kb' => (int) ceil(strlen($this->jpg($title, $artist, $palette, false)) / 1024) + 240,
+                    'file_size_kb' => (int) ceil(strlen($imageContents) / 1024),
                     'is_featured' => in_array($title, $featured, true),
                     'is_active' => true,
                 ],
