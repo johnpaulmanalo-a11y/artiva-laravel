@@ -18,23 +18,23 @@ class ArtworkSeeder extends Seeder
     public function run(): void
     {
         $artworks = [
-            ['Jp', 'Pixel Characters', 'John Paul Manalo', 38.00,
+            ['Jp', 'Pixel Characters', 'John Paul Manalo', 400.00,
     'A portrait study in warm neutrals, built from layered brushwork and light.',
     'images/jep.jpg'],
 
-            ['captain valor', 'Pixel Characters', 'John Paul Manalo', 65.00,
+            ['captain valor', 'Pixel Characters', 'John Paul Manalo', 400.00,
     'A decorated captain rendered in bold shapes and navy shadow.',
     'images/captain valor.jpg'],
 
-            ['archery', 'Pixel Characters', 'John Paul Manalo', 52.50,
+            ['archery', 'Pixel Characters', 'John Paul Manalo', 400.00,
     'Focus, breath and release — a concept piece for a forest tournament.',
     'images/archery.jpg'],
 
-            ['dan the boss', 'Pixel Characters', 'John Paul Manalo', 72.00,
+            ['dan the boss', 'Pixel Characters', 'John Paul Manalo', 400.00,
     'The boss of the block, illustrated with hard light and brass accents.',
     'images/dan the boss.jpg'],
 
-     ['kai', 'Pixel Characters', 'John Paul Manalo', 72.00,
+     ['kai', 'Pixel Characters', 'John Paul Manalo', 400.00,
     'The boss of the block, illustrated with hard light and brass accents.',
     'images/kai.jpg'],
 
