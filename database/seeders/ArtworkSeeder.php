@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Database\Seeders;
@@ -39,23 +38,23 @@ class ArtworkSeeder extends Seeder
                 'The boss of the block, illustrated with hard light and brass accents.',
                 'images/kai.jpg'],
 
-            ['Sarah', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+            ['Sarah', 'Abstract Characters', 'Charlene France Sollestre', 400.00,
                 'A portrait study featuring expressive features and warm colors.',
                 'images/Sarah.png'],
 
-            ['Arman', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+            ['Arman', 'Abstract Characters', 'Charlene France Sollestre', 400.00,
                 'A geometric character featuring glasses and a red vest.',
                 'images/Arman.jpg'],
 
-            ['Pablo', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+            ['Pablo', 'Abstract Characters', 'Charlene France Sollestre', 400.00,
                 'A playful geometric character wearing a yellow shirt and blue pants.',
                 'images/Pablo.jpg'],
 
-            ['Nicole', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+            ['Nicole', 'Abstract Characters', 'Charlene France Sollestre', 400.00,
                 'A colorful portrait featuring blonde hair and round glasses.',
                 'images/Nicole.png'],
 
-            ['Marites', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
+            ['Marites', 'Abstract Characters', 'Charlene France Sollestre', 400.00,
                 'A unique character illustration with a distinctive personality.',
                 'images/marites.jpg'],
         ];
