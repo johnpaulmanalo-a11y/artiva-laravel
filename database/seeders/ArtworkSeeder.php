@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Database\Seeders;
@@ -58,6 +57,9 @@ class ArtworkSeeder extends Seeder
             ['Marites', 'Pixel Characters', 'Charlene France Sollestre', 400.00,
                 'A unique character illustration with a distinctive personality.',
                 'images/marites.jpg'],
+            ['The Reporter', 'Digital Characters', 'Reema Andrea Sobrevega', 400.00,
+    'A character illustration of The Reporter.',
+    'images/the-reporter.jpg'],
         ];
 
         $featured = [
@@ -71,6 +73,7 @@ class ArtworkSeeder extends Seeder
             'Pablo',
             'Nicole',
             'Marites',
+            'The Reporter',
         ];
 
         foreach ($artworks as $index => [$title, $categoryName, $artist, $price, $description, $image]) {
