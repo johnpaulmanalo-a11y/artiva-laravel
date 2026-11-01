@@ -60,6 +60,9 @@ class ArtworkSeeder extends Seeder
             ['The Reporter', 'Digital Characters', 'Reema Andrea Sobrevega', 400.00,
     'A character illustration of The Reporter.',
     'images/the-reporter.jpg'],
+            ['Virgo', '3D Characters', 'Mark John Paul Avendano', 400.00,
+    'A character illustration of Virgo.',
+    'images/Virgo.jpg'],
         ];
 
         $featured = [
