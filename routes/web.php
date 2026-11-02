@@ -113,6 +113,7 @@ Route::middleware(['auth', 'admin'])
         Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
         Route::patch('/orders/{order}/status', [Admin\OrderController::class, 'updateStatus'])->name('orders.status');
+        Route::patch('/orders/{order}/verify-payment', [Admin\OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
 
         Route::get('/customers', [Admin\CustomerController::class, 'index'])->name('customers.index');
         Route::get('/customers/{user}', [Admin\CustomerController::class, 'show'])->name('customers.show');

@@ -7,7 +7,7 @@
 
     function initPaymentMethods() {
         const options = Array.from(document.querySelectorAll('[data-payment-option]'));
-        const fields = document.querySelector('[data-card-fields]');
+        const fields = document.querySelector('[data-gcash-fields]');
         if (!options.length) return;
 
         const sync = () => {
@@ -19,18 +19,7 @@
             });
 
             if (fields) {
-                fields.classList.toggle('is-visible', method === 'card');
-            }
-
-            if (method !== 'card') {
-                const cardNumber = document.getElementById('card_number');
-                const cardExpiry = document.getElementById('card_expiry');
-                const cardCvv = document.getElementById('card_cvv');
-                [cardNumber, cardExpiry, cardCvv].forEach((input) => {
-                    if (!input) return;
-                    input.value = '';
-                    input.setCustomValidity('');
-                });
+                fields.classList.toggle('is-visible', method === 'gcash');
             }
         };
 

@@ -79,19 +79,29 @@
                             <span class="form-card__num">2</span>
                             <div>
                                 <h2>Payment method</h2>
-                                <p>This project uses a simulated gateway for demonstration.</p>
+                                <p>Payments stay pending until you verify that the money was actually received.</p>
                             </div>
                         </div>
 
                         <div class="payment-options">
                             <label class="payment-option" data-payment-option>
-                                <input type="radio" name="payment_method" value="card" @checked(old('payment_method', 'card') === 'card')>
+                                <input type="radio" name="payment_method" value="gcash" @checked(old('payment_method', 'gcash') === 'gcash') required>
+                                <div class="payment-option__row">
+                                    <span class="payment-option__radio"></span>
+                                    <span class="payment-option__label"><i class="bi bi-qr-code"></i> GCash QR</span>
+                                    <span class="payment-option__tag">Manual verification</span>
+                                </div>
+                                <p class="payment-option__hint">Scan the QR code, pay the exact total, then enter your transaction reference. Your order stays pending until the payment is checked.</p>
+                            </label>
+
+                            <label class="payment-option" data-payment-option>
+                                <input type="radio" name="payment_method" value="card" @checked(old('payment_method') === 'card')>
                                 <div class="payment-option__row">
                                     <span class="payment-option__radio"></span>
                                     <span class="payment-option__label"><i class="bi bi-credit-card-2-front"></i> Credit or debit card</span>
-                                    <span class="payment-option__tag">Sandbox</span>
+                                    <span class="payment-option__tag">Not connected</span>
                                 </div>
-                                <p class="payment-option__hint">Test any 16-digit number. Nothing is charged.</p>
+                                <p class="payment-option__hint">A real card gateway must be connected before card payments can be accepted. Do not enter card details on this page.</p>
                             </label>
 
                             <label class="payment-option" data-payment-option>
@@ -99,53 +109,28 @@
                                 <div class="payment-option__row">
                                     <span class="payment-option__radio"></span>
                                     <span class="payment-option__label"><i class="bi bi-paypal"></i> PayPal</span>
-                                    <span class="payment-option__tag">Sandbox</span>
+                                    <span class="payment-option__tag">Not connected</span>
                                 </div>
-                                <p class="payment-option__hint">Simulated redirect — approved instantly for the demo.</p>
-                            </label>
-
-                            <label class="payment-option" data-payment-option>
-                                <input type="radio" name="payment_method" value="simulated" @checked(old('payment_method') === 'simulated')>
-                                <div class="payment-option__row">
-                                    <span class="payment-option__radio"></span>
-                                    <span class="payment-option__label"><i class="bi bi-cpu"></i> Artiva simulated gateway</span>
-                                </div>
-                                <p class="payment-option__hint">No card details required. Marks the order paid for demonstration.</p>
+                                <p class="payment-option__hint">A real PayPal integration must be connected before PayPal payments can be accepted.</p>
                             </label>
                         </div>
 
-                        <div class="payment-fields {{ old('payment_method', 'card') === 'card' ? 'is-visible' : '' }}" data-card-fields>
-                            <div class="card-preview">
-                                <div class="card-preview__top">
-                                    <span>Artiva sandbox</span>
-                                    <i class="bi bi-credit-card"></i>
-                                </div>
-                                <div class="card-preview__number" data-card-preview-number>•••• •••• •••• ••••</div>
-                                <div class="card-preview__bottom">
-                                    <span>{{ strtoupper($user->name) }}</span>
-                                    <span data-card-preview-expiry>MM/YY</span>
-                                </div>
+                        <div class="payment-fields is-visible" data-gcash-fields>
+                            <div style="text-align:center; padding: 18px 0;">
+                                <h3>Pay with GCash</h3>
+                                <p>Scan this QR code with your GCash app and pay exactly <strong>{{ money($total) }}</strong>.</p>
+                                <img src="{{ asset('images/gcash-qr.jpg') }}" alt="GCash payment QR code" style="width:min(280px, 100%); height:auto; background:#fff; padding:10px; border-radius:12px;">
+                                <p class="text-muted-soft" style="font-size:.85rem; margin-top:12px;">Keep your GCash receipt. Submitting a reference does not automatically prove payment.</p>
                             </div>
+                            <div>
+                                <label class="form-label" for="payment_reference">GCash transaction reference</label>
+                                <input class="form-control" type="text" id="payment_reference" name="payment_reference" value="{{ old('payment_reference') }}" maxlength="100" placeholder="Enter the reference shown in GCash">
+                            </div>
+                        </div>
 
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label" for="card_number">Card number</label>
-                                    <input class="form-control" type="text" id="card_number" name="card_number" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="23">
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label" for="card_expiry">Expiry</label>
-                                    <input class="form-control" type="text" id="card_expiry" name="card_expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5">
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label" for="card_cvv">CVV</label>
-                                    <input class="form-control" type="text" id="card_cvv" name="card_cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4">
-                                </div>
-                            </div>
-
-                            <div class="payment-sandbox-note">
-                                <i class="bi bi-exclamation-triangle"></i>
-                                <span><strong>Demonstration mode.</strong> These fields are validated but never sent to a real payment provider. Use any test numbers, for example 4242 4242 4242 4242 with 12/30 and 123.</span>
-                            </div>
+                        <div class="payment-sandbox-note">
+                            <i class="bi bi-shield-exclamation"></i>
+                            <span><strong>Payment verification required.</strong> Orders are not marked paid and downloads stay locked until you independently verify the payment in your GCash records or through a connected payment provider. Card and PayPal options are placeholders until real gateways are configured.</span>
                         </div>
                     </div>
 

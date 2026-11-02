@@ -14,16 +14,12 @@ use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Review the order before paying.
-     */
     public function index(Request $request): View|RedirectResponse
     {
         $cart = Cart::forUser($request->user())->load('items.artwork.category');
 
         if ($cart->isEmpty()) {
-            return redirect()
-                ->route('cart.index')
+            return redirect()->route('cart.index')
                 ->with('info', 'Your cart is empty — add an artwork before checking out.');
         }
 
@@ -41,46 +37,36 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Create the order, record the (simulated) payment and empty the cart.
+     * Create an unpaid order. Never mark a payment as paid based on form input.
+     * Real card/PayPal processing must be handled by a gateway and verified server-side.
      */
     public function store(Request $request): RedirectResponse
     {
-        // Visitors type card numbers with spaces ("4242 4242 4242 4242"), so the
-        // value is normalised to digits before the validation rules run.
-        if ($request->filled('card_number')) {
-            $request->merge([
-                'card_number' => preg_replace('/\D/', '', (string) $request->input('card_number')),
-            ]);
-        }
-
         $data = $request->validate([
             'billing_name' => ['required', 'string', 'max:120'],
             'billing_email' => ['required', 'email', 'max:150'],
             'billing_phone' => ['nullable', 'string', 'max:30'],
             'billing_address' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:500'],
-            'payment_method' => ['required', 'in:card,paypal,simulated'],
-            'card_number' => ['nullable', 'required_if:payment_method,card', 'digits_between:13,19'],
-            'card_expiry' => ['nullable', 'required_if:payment_method,card', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
-            'card_cvv' => ['nullable', 'required_if:payment_method,card', 'digits_between:3,4'],
+            'payment_method' => ['required', 'in:gcash,card,paypal'],
+            'payment_reference' => ['nullable', 'required_if:payment_method,gcash', 'string', 'max:100'],
             'terms' => ['accepted'],
         ], [
             'terms.accepted' => 'Please accept the Artiva licence terms to continue.',
+            'payment_reference.required_if' => 'Enter the GCash transaction reference so the payment can be checked.',
         ]);
 
         $user = $request->user();
         $cart = Cart::forUser($user)->load('items.artwork');
 
         if ($cart->isEmpty()) {
-            return redirect()
-                ->route('cart.index')
+            return redirect()->route('cart.index')
                 ->with('error', 'Your cart is empty — nothing to check out.');
         }
 
         $subtotal = round((float) $cart->items->sum(
             fn ($item) => (float) $item->artwork->price * $item->quantity
         ), 2);
-
         $tax = round($subtotal * (float) config('artiva.tax_rate'), 2);
         $total = round($subtotal + $tax, 2);
 
@@ -91,22 +77,21 @@ class CheckoutController extends Controller
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'total' => $total,
-                'status' => Order::STATUS_PROCESSING,
-                'payment_status' => Order::PAYMENT_PAID,
+                'status' => Order::STATUS_PENDING,
+                'payment_status' => Order::PAYMENT_PENDING,
                 'payment_method' => $data['payment_method'],
                 'billing_name' => $data['billing_name'],
                 'billing_email' => $data['billing_email'],
                 'billing_phone' => $data['billing_phone'] ?? null,
                 'billing_address' => $data['billing_address'] ?? null,
                 'notes' => $data['notes'] ?? null,
-                'paid_at' => now(),
+                'paid_at' => null,
             ]);
 
             foreach ($cart->items as $item) {
                 /** @var Artwork $artwork */
                 $artwork = $item->artwork;
                 $lineTotal = round((float) $artwork->price * $item->quantity, 2);
-
                 $order->items()->create([
                     'artwork_id' => $artwork->id,
                     'title' => $artwork->title,
@@ -120,20 +105,20 @@ class CheckoutController extends Controller
             Payment::create([
                 'order_id' => $order->id,
                 'method' => $data['payment_method'],
-                'transaction_id' => 'SIM-'.Str::upper(Str::random(12)),
+                'transaction_id' => null,
                 'amount' => $total,
-                'status' => Order::PAYMENT_PAID,
+                'status' => Order::PAYMENT_PENDING,
                 'payload' => [
-                    'gateway' => 'Artiva Simulated Gateway',
-                    'message' => 'Sandbox transaction approved — no real money moved.',
-                    'card_last_four' => isset($data['card_number'])
-                        ? substr($data['card_number'], -4)
-                        : null,
+                    'verification' => 'manual_review_required',
+                    'customer_reference' => $data['payment_reference'] ?? null,
+                    'note' => $data['payment_method'] === 'gcash'
+                        ? 'Customer supplied a GCash reference; verify against actual received funds before approving.'
+                        : 'Payment gateway is not connected. Do not approve until a real provider confirms payment.',
                 ],
-                'paid_at' => now(),
+                'paid_at' => null,
             ]);
 
-            // The cart is only cleared once the order and payment are written.
+            // Keep order details while awaiting payment verification.
             $cart->items()->delete();
 
             return $order;
@@ -141,27 +126,20 @@ class CheckoutController extends Controller
 
         return redirect()
             ->route('checkout.success', $order)
-            ->with('success', 'Payment approved. Your artwork is ready in your library.');
+            ->with('info', 'Order created. Payment is pending verification; downloads remain locked until payment is confirmed.');
     }
 
-    /**
-     * Order confirmation page.
-     */
     public function success(Request $request, Order $order): View
     {
         $this->authorizeOrder($request, $order);
-
         $order->load('items.artwork', 'payments');
 
-        return view('checkout.success', [
-            'order' => $order,
-        ]);
+        return view('checkout.success', ['order' => $order]);
     }
 
     private function authorizeOrder(Request $request, Order $order): void
     {
         $user = $request->user();
-
         abort_unless($user && ($user->isAdmin() || $order->user_id === $user->id), 404);
     }
 }
