@@ -57,9 +57,10 @@ class ArtworkSeeder extends Seeder
             ['Marites', 'Abstract Characters', 'Charlene France Sollestre', 400.00,
                 'A unique character illustration with a distinctive personality.',
                 'images/marites.jpg'],
+
             ['The Reporter', 'Digital Characters', 'Reema Andrea Sobrevega', 400.00,
-    'A character illustration of The Reporter.',
-    'images/the-reporter.jpg'],
+                 'A character illustration of The Reporter.',
+                 'images/the reporter.jpg'],
         ];
 
         $featured = [
