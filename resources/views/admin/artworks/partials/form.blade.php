@@ -33,7 +33,7 @@
     <div>
         <label class="form-label" for="price">Price</label>
         <div class="input-group">
-            <span class="input-group-text">{{ config('artiva.currency_symbol', '$') }}</span>
+            <span class="input-group-text">{{ config('artiva.currency_symbol', '₱') }}</span>
             <input class="form-control" type="number" id="price" name="price" value="{{ old('price', $artwork->price) }}" required min="0" step="0.01" placeholder="0.00">
         </div>
     </div>

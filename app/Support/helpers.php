@@ -3,22 +3,21 @@
 use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('money')) {
-    function money(float|int|string|null $amount, string $currency = 'USD'): string
+    function money(float|int|string|null $amount, ?string $currency = null): string
     {
         $value = is_numeric($amount) ? (float) $amount : 0.0;
+        $configuredCurrency = strtoupper((string) config('artiva.currency', 'PHP'));
+        $currency = strtoupper($currency ?? $configuredCurrency);
 
-        if (class_exists('NumberFormatter') && extension_loaded('intl')) {
-            $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
-
-            return $formatter->formatCurrency($value, strtoupper($currency));
-        }
-
-        $symbol = match (strtoupper($currency)) {
-            'EUR' => '€',
-            'GBP' => '£',
-            'JPY' => '¥',
-            default => '$',
-        };
+        $symbol = $currency === $configuredCurrency
+            ? config('artiva.currency_symbol', '₱')
+            : match ($currency) {
+                'PHP' => '₱',
+                'EUR' => '€',
+                'GBP' => '£',
+                'JPY' => '¥',
+                default => '$',
+            };
 
         $formatted = number_format(abs($value), 2, '.', ',');
 

@@ -48,6 +48,16 @@ class StorefrontTest extends TestCase
         $response->assertSee('Personal-use licence');
     }
 
+    public function test_money_uses_the_configured_peso_symbol(): void
+    {
+        config([
+            'artiva.currency' => 'PHP',
+            'artiva.currency_symbol' => '₱',
+        ]);
+
+        $this->assertSame('₱1,234.50', money(1234.5));
+    }
+
     public function test_hidden_artwork_is_not_publicly_visible(): void
     {
         $artwork = Artwork::query()->first();

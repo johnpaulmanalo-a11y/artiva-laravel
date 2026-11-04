@@ -12,9 +12,9 @@ return [
     |
     */
 
-    'currency' => env('APP_CURRENCY', 'USD'),
+    'currency' => env('APP_CURRENCY', 'PHP'),
 
-    'currency_symbol' => env('APP_CURRENCY_SYMBOL', '$'),
+    'currency_symbol' => env('APP_CURRENCY_SYMBOL', '₱'),
 
     /*
     |--------------------------------------------------------------------------
