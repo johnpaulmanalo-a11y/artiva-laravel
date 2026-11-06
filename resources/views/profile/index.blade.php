@@ -109,6 +109,34 @@
 
                     <div class="profile-card">
                         <div class="profile-card__head">
+                            <h2>Preferred payment method</h2>
+                            <p>Choose which payment option should be selected by default when you check out.</p>
+                        </div>
+
+                        <form method="POST" action="{{ route('profile.payment-method') }}" data-loading>
+                            @csrf
+                            @method('PATCH')
+
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="preferred_payment_method">Payment method</label>
+                                    <select class="form-select" id="preferred_payment_method" name="preferred_payment_method" required>
+                                        <option value="gcash" @selected(old('preferred_payment_method', $user->preferred_payment_method ?? 'gcash') === 'gcash')>GCash QR</option>
+                                        <option value="card" @selected(old('preferred_payment_method', $user->preferred_payment_method ?? 'gcash') === 'card')>Credit or debit card</option>
+                                        <option value="paypal" @selected(old('preferred_payment_method', $user->preferred_payment_method ?? 'gcash') === 'paypal')>PayPal</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <p class="form-text mt-2">This saves your preferred option only. Artiva does not save your card number, CVV or expiry date. Card and PayPal payments still require their payment gateway to be connected.</p>
+                            <div class="form-actions">
+                                <button class="btn btn-ink" type="submit">Save payment preference</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="profile-card__head">
                             <h2>Change password</h2>
                             <p>Use at least 8 characters with upper and lower case letters and a number.</p>
                         </div>

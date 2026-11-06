@@ -58,6 +58,19 @@ class ProfileController extends Controller
             ->with('success', 'Your profile was updated.');
     }
 
+    public function paymentMethod(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'preferred_payment_method' => ['required', 'in:gcash,card,paypal'],
+        ]);
+
+        $request->user()->update($data);
+
+        return redirect()
+            ->route('profile.index')
+            ->with('success', 'Your preferred payment method was saved. This does not store card details or charge your card.');
+    }
+
     public function password(Request $request): RedirectResponse
     {
         $data = $request->validate([

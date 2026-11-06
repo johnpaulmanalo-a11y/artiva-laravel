@@ -21,14 +21,21 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
 
         if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('status', 'We emailed you a password reset link. In this demo MAIL_MAILER=log, so the link appears in storage/logs/laravel.log.');
+            return back()->with(
+                'status',
+                'We have emailed your password reset link. Please check your inbox and spam folder.'
+            );
         }
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => __($status)]);
+            ->withErrors([
+                'email' => __($status)
+            ]);
     }
 }

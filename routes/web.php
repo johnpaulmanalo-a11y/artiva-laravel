@@ -93,6 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
+    Route::patch('/profile/payment-method', [ProfileController::class, 'paymentMethod'])->name('profile.payment-method');
 });
 
 /*

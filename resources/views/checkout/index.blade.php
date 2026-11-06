@@ -85,7 +85,7 @@
 
                         <div class="payment-options">
                             <label class="payment-option" data-payment-option>
-                                <input type="radio" name="payment_method" value="gcash" @checked(old('payment_method', 'gcash') === 'gcash') required>
+                                <input type="radio" name="payment_method" value="gcash" @checked(old('payment_method', $user->preferred_payment_method ?? 'gcash') === 'gcash') required>
                                 <div class="payment-option__row">
                                     <span class="payment-option__radio"></span>
                                     <span class="payment-option__label"><i class="bi bi-qr-code"></i> GCash QR</span>
@@ -95,7 +95,7 @@
                             </label>
 
                             <label class="payment-option" data-payment-option>
-                                <input type="radio" name="payment_method" value="card" @checked(old('payment_method') === 'card')>
+                                <input type="radio" name="payment_method" value="card" @checked(old('payment_method', $user->preferred_payment_method ?? 'gcash') === 'card')>
                                 <div class="payment-option__row">
                                     <span class="payment-option__radio"></span>
                                     <span class="payment-option__label"><i class="bi bi-credit-card-2-front"></i> Credit or debit card</span>
@@ -105,7 +105,7 @@
                             </label>
 
                             <label class="payment-option" data-payment-option>
-                                <input type="radio" name="payment_method" value="paypal" @checked(old('payment_method') === 'paypal')>
+                                <input type="radio" name="payment_method" value="paypal" @checked(old('payment_method', $user->preferred_payment_method ?? 'gcash') === 'paypal')>
                                 <div class="payment-option__row">
                                     <span class="payment-option__radio"></span>
                                     <span class="payment-option__label"><i class="bi bi-paypal"></i> PayPal</span>
