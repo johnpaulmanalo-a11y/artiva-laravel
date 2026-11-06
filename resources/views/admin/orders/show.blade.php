@@ -145,6 +145,34 @@
                 </form>
             </div>
 
+            @if (!$order->isPaid())
+                <div class="admin-card" style="margin-top: 20px; border: 1px solid #d97706;">
+                    <div class="admin-card__head">
+                        <div>
+                            <h3>Verify payment manually</h3>
+                            <p>First check the actual GCash/bank/provider transaction records. A customer reference or screenshot alone is not proof.</p>
+                        </div>
+                    </div>
+                    @foreach ($order->payments as $payment)
+                        <dl class="detail-list">
+                            <div class="detail-list__row">
+                                <dt>Customer reference</dt>
+                                <dd>{{ data_get($payment->payload, 'customer_reference') ?: 'Not supplied' }}</dd>
+                            </div>
+                            <div class="detail-list__row">
+                                <dt>Verification</dt>
+                                <dd>{{ data_get($payment->payload, 'verification', 'pending') }}</dd>
+                            </div>
+                        </dl>
+                    @endforeach
+                    <form method="POST" action="{{ route('admin.orders.verify-payment', $order) }}" onsubmit="return confirm('Have you independently confirmed the exact amount was received in your GCash/bank/provider account?');">
+                        @csrf
+                        @method('PATCH')
+                        <button class="btn btn-ink" type="submit">Mark payment verified</button>
+                    </form>
+                </div>
+            @endif
+
             <div class="admin-card" style="margin-top: 20px;">
                 <div class="admin-card__head">
                     <div>

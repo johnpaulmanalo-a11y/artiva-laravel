@@ -1,195 +1,206 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Order '.$order->order_number.' — Artiva')
-@section('meta_description', 'Order details, billing information and downloads for your Artiva purchase.')
-
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/orders.css') }}">
-@endpush
+@section('title', 'Order '.$order->order_number.' — Artiva Admin')
+@section('eyebrow', 'Sales')
+@section('heading', 'Order details')
 
 @section('content')
-    <section class="page-shell">
-        <div class="container">
-            <nav class="breadcrumb" aria-label="Breadcrumb">
-                <a href="{{ route('home') }}">Home</a>
-                <span class="breadcrumb__sep">/</span>
-                <a href="{{ route('orders.index') }}">Orders</a>
-                <span class="breadcrumb__sep">/</span>
-                <span>{{ $order->order_number }}</span>
-            </nav>
+    <div class="admin-page-head">
+        <div>
+            <h2>{{ $order->order_number }}</h2>
+            <p>
+                Placed {{ $order->created_at->format('j F Y, g:i a') }} by
+                <a href="{{ route('admin.customers.show', $order->user) }}" style="text-decoration: underline;">{{ $order->user->name }}</a>
+            </p>
+        </div>
+        <div class="admin-page-head__actions">
+            <span class="pill {{ $order->payment_status === 'paid' ? 'pill--success' : 'pill--warning' }}">{{ $order->paymentStatusLabel() }}</span>
+            <span class="pill {{ $order->status === 'completed' ? 'pill--success' : 'pill--sky' }}">{{ $order->statusLabel() }}</span>
+            <a class="btn btn-outline-ink btn-sm" href="{{ route('admin.orders.index') }}"><i class="bi bi-arrow-left"></i> Orders</a>
+        </div>
+    </div>
 
-            <div class="page-head">
+    <div class="detail-grid">
+        <div class="admin-card">
+            <div class="admin-card__head">
                 <div>
-                    <p class="eyebrow">Order details</p>
-                    <h1 class="order-number">{{ $order->order_number }}</h1>
-                    <p>
-                        Placed {{ $order->created_at->format('j F Y, g:i a') }} &middot;
-                        <span class="pill {{ $order->payment_status === 'paid' ? 'pill--success' : 'pill--warning' }}">{{ $order->paymentStatusLabel() }}</span>
-                        <span class="pill pill--muted">{{ $order->statusLabel() }}</span>
-                    </p>
-                </div>
-                <div class="d-flex gap-2 flex-wrap">
-                    @if ($order->user_id !== auth()->id())
-                        <a class="btn btn-outline-ink btn-sm" href="{{ route('admin.orders.show', $order) }}">Open in admin</a>
-                    @endif
-                    <a class="btn btn-outline-ink btn-sm" href="{{ route('orders.index') }}"><i class="bi bi-arrow-left"></i> All orders</a>
+                    <h3>Customer</h3>
                 </div>
             </div>
 
-            <div class="order-detail">
-                <div>
-                    <div class="order-panel">
-                        <div class="order-panel__head">
-                            <h2>Artwork in this order</h2>
-                            <span class="pill pill--muted">{{ $order->items->count() }} {{ \Illuminate\Support\Str::plural('item', $order->items->count()) }}</span>
-                        </div>
-
-                        @foreach ($order->items as $item)
-                            <div class="order-line">
-                                <div class="order-line__thumb">
-                                    @if ($item->artwork && $item->artwork->previewUrl())
-                                        <img src="{{ $item->artwork->previewUrl() }}" alt="{{ $item->title }}">
-                                    @else
-                                        {{ mb_substr($item->title, 0, 1) }}
-                                    @endif
-                                </div>
-
-                                <div class="order-line__body">
-                                    @if ($item->artwork)
-                                        <a class="order-line__title" href="{{ route('artworks.show', $item->artwork) }}">{{ $item->title }}</a>
-                                    @else
-                                        <span class="order-line__title">{{ $item->title }}</span>
-                                    @endif
-                                    <span class="order-line__meta">
-                                        {{ $item->artist_name ?: 'Artiva artist' }} &middot; Qty {{ $item->quantity }}
-                                    </span>
-                                </div>
-
-                                <span class="order-line__price">{{ money($item->subtotal) }}</span>
-
-                                @if ($item->artwork && in_array($item->artwork_id, $purchasedIds, true))
-                                    <a class="btn btn-ghost btn-sm" href="{{ route('library.download', $item->artwork) }}">
-                                        <i class="bi bi-download"></i> Download
-                                    </a>
-                                @else
-                                    <span class="pill pill--muted">Unavailable</span>
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <div class="order-panel">
-                        <div class="order-panel__head">
-                            <h2>Billing &amp; delivery</h2>
-                        </div>
-
-                        <div class="order-meta-grid">
-                            <div>
-                                <h3>Billed to</h3>
-                                <p>
-                                    {{ $order->billing_name }}<br>
-                                    {{ $order->billing_email }}
-                                    @if ($order->billing_phone)
-                                        <br>{{ $order->billing_phone }}
-                                    @endif
-                                    @if ($order->billing_address)
-                                        <br>{{ $order->billing_address }}
-                                    @endif
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3>Delivery method</h3>
-                                <p>
-                                    Digital download<br>
-                                    Available immediately after payment
-                                    @if ($order->paid_at)
-                                        <br>Paid {{ $order->paid_at->format('j M Y, g:i a') }}
-                                    @endif
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3>Payment method</h3>
-                                <p>
-                                    {{ $order->payment_method === 'card' ? 'Credit / debit card' : ucfirst($order->payment_method) }}<br>
-                                    Simulated gateway (sandbox)
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3>Order notes</h3>
-                                <p>{{ $order->notes ?: 'No notes on this order.' }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if ($order->payments->isNotEmpty())
-                        <div class="order-panel">
-                            <div class="order-panel__head">
-                                <h2>Payment records</h2>
-                            </div>
-
-                            @foreach ($order->payments as $payment)
-                                <div class="payment-record">
-                                    <div>
-                                        <div class="payment-record__id">{{ $payment->transaction_id }}</div>
-                                        <div class="payment-record__meta">
-                                            {{ ucfirst($payment->method) }} &middot;
-                                            {{ $payment->paid_at ? $payment->paid_at->format('j M Y, g:i a') : 'Not completed' }}
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <span class="payment-record__meta">{{ money($payment->amount) }}</span>
-                                        <span class="pill {{ $payment->status === 'paid' ? 'pill--success' : 'pill--warning' }}">
-                                            {{ ucfirst($payment->status) }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
+            <dl class="detail-list">
+                <div class="detail-list__row">
+                    <dt>Name</dt>
+                    <dd>{{ $order->billing_name }}</dd>
                 </div>
+                <div class="detail-list__row">
+                    <dt>Email</dt>
+                    <dd>{{ $order->billing_email }}</dd>
+                </div>
+                <div class="detail-list__row">
+                    <dt>Phone</dt>
+                    <dd>{{ $order->billing_phone ?: '—' }}</dd>
+                </div>
+                <div class="detail-list__row">
+                    <dt>Address</dt>
+                    <dd>{{ $order->billing_address ?: '—' }}</dd>
+                </div>
+                <div class="detail-list__row">
+                    <dt>Account</dt>
+                    <dd><a href="{{ route('admin.customers.show', $order->user) }}">{{ $order->user->email }}</a></dd>
+                </div>
+                <div class="detail-list__row">
+                    <dt>Payment method</dt>
+                    <dd>{{ $order->payment_method === 'card' ? 'Card' : ucfirst($order->payment_method) }}</dd>
+                </div>
+                <div class="detail-list__row">
+                    <dt>Paid at</dt>
+                    <dd>{{ $order->paid_at ? $order->paid_at->format('j M Y, g:i a') : 'Not paid' }}</dd>
+                </div>
+            </dl>
 
-                <aside>
-                    <div class="summary-card">
-                        <h2>Receipt</h2>
-
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span>{{ money($order->subtotal) }}</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Tax</span>
-                            <span>{{ money($order->tax) }}</span>
-                        </div>
-                        <div class="summary-row summary-row--total">
-                            <span>Total</span>
-                            <span>{{ money($order->total) }}</span>
-                        </div>
-
-                        <a class="btn btn-ink btn-block" href="{{ route('library.index') }}" style="margin-top: 18px;">
-                            <i class="bi bi-collection"></i> Open library
-                        </a>
-
-                        <div class="summary-note">
-                            <i class="bi bi-info-circle"></i>
-                            <span>Keep this order number for support: <strong>{{ $order->order_number }}</strong></span>
-                        </div>
-                    </div>
-
-                    <div class="summary-card" style="margin-top: 18px;">
-                        <h2>Need help?</h2>
-                        <p class="text-muted-soft" style="font-size: 0.86rem; line-height: 1.7;">
-                            If a download will not open or you need a different file format, contact the Artiva team
-                            with your order number and we will sort it out.
-                        </p>
-                        <a class="btn btn-outline-ink btn-block" href="{{ route('contact') }}" style="margin-top: 14px;">
-                            Contact support
-                        </a>
-                    </div>
-                </aside>
+            <div style="margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line);">
+                <span class="mono-label">Order notes</span>
+                <p class="text-muted-soft" style="font-size: 0.88rem; margin-top: 6px;">{{ $order->notes ?: 'No notes on this order.' }}</p>
             </div>
         </div>
-    </section>
+
+        <div>
+            <div class="admin-card">
+                <div class="admin-card__head">
+                    <div>
+                        <h3>Items</h3>
+                        <p>{{ $order->items->count() }} {{ \Illuminate\Support\Str::plural('artwork', $order->items->count()) }}</p>
+                    </div>
+                </div>
+
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Artwork</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($order->items as $item)
+                                <tr>
+                                    <td>
+                                        <span class="admin-table__title">{{ $item->title }}</span>
+                                        <span class="admin-table__sub">{{ $item->artist_name ?: 'Artiva artist' }}</span>
+                                    </td>
+                                    <td class="admin-table__num">{{ money($item->price) }}</td>
+                                    <td class="admin-table__num">{{ $item->quantity }}</td>
+                                    <td class="admin-table__num text-end">{{ money($item->subtotal) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <dl class="detail-list" style="margin-top: 16px;">
+                    <div class="detail-list__row">
+                        <dt>Subtotal</dt>
+                        <dd>{{ money($order->subtotal) }}</dd>
+                    </div>
+                    <div class="detail-list__row">
+                        <dt>Tax</dt>
+                        <dd>{{ money($order->tax) }}</dd>
+                    </div>
+                    <div class="detail-list__row">
+                        <dt>Total</dt>
+                        <dd style="font-size: 1rem;">{{ money($order->total) }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="admin-card" style="margin-top: 20px;">
+                <div class="admin-card__head">
+                    <div>
+                        <h3>Update status</h3>
+                        <p>Completing an order confirms delivery. Refunding marks the payment refunded.</p>
+                    </div>
+                </div>
+
+                <form class="admin-form" method="POST" action="{{ route('admin.orders.status', $order) }}">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="form-grid">
+                        <div>
+                            <label class="form-label" for="status">Order status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                @foreach ($statuses as $option)
+                                    <option value="{{ $option }}" @selected($order->status === $option)>{{ ucfirst($option) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-ink" type="submit">Save status</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @if (!$order->isPaid())
+                <div class="admin-card" style="margin-top: 20px; border: 1px solid #d97706;">
+                    <div class="admin-card__head">
+                        <div>
+                            <h3>Verify payment manually</h3>
+                            <p>First check the actual GCash/bank/provider transaction records. A customer reference or screenshot alone is not proof.</p>
+                        </div>
+                    </div>
+                    @foreach ($order->payments as $payment)
+                        <dl class="detail-list">
+                            <div class="detail-list__row">
+                                <dt>Customer reference</dt>
+                                <dd>{{ data_get($payment->payload, 'customer_reference') ?: 'Not supplied' }}</dd>
+                            </div>
+                            <div class="detail-list__row">
+                                <dt>Verification</dt>
+                                <dd>{{ data_get($payment->payload, 'verification', 'pending') }}</dd>
+                            </div>
+                        </dl>
+                    @endforeach
+                    <form method="POST" action="{{ route('admin.orders.verify-payment', $order) }}" onsubmit="return confirm('Have you independently confirmed the exact amount was received in your GCash/bank/provider account?');">
+                        @csrf
+                        @method('PATCH')
+                        <button class="btn btn-ink" type="submit">Mark payment verified</button>
+                    </form>
+                </div>
+            @endif
+
+            <div class="admin-card" style="margin-top: 20px;">
+                <div class="admin-card__head">
+                    <div>
+                        <h3>Payment records</h3>
+                    </div>
+                </div>
+
+                @forelse ($order->payments as $payment)
+                    <div class="payment-record">
+                        <div>
+                            <div class="payment-record__id">{{ $payment->transaction_id }}</div>
+                            <div class="payment-record__meta">
+                                {{ ucfirst($payment->method) }} &middot;
+                                {{ $payment->paid_at ? $payment->paid_at->format('j M Y, g:i a') : 'Pending' }}
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="payment-record__meta">{{ money($payment->amount) }}</span>
+                            <span class="pill {{ $payment->status === 'paid' ? 'pill--success' : 'pill--warning' }}">{{ ucfirst($payment->status) }}</span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="admin-empty">
+                        <i class="bi bi-credit-card"></i>
+                        No payment recorded for this order.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
 @endsection
