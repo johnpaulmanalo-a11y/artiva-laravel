@@ -101,7 +101,7 @@
                                     <span class="payment-option__label"><i class="bi bi-credit-card-2-front"></i> Credit or debit card</span>
                                     <span class="payment-option__tag">Not connected</span>
                                 </div>
-                                <p class="payment-option__hint">A real card gateway must be connected before card payments can be accepted. Do not enter card details on this page.</p>
+                                <p class="payment-option__hint">Choose this option to preview the card form. Card processing is not connected yet.</p>
                             </label>
 
                             <label class="payment-option" data-payment-option>
@@ -126,6 +126,48 @@
                                 <label class="form-label" for="payment_reference">GCash transaction reference</label>
                                 <input class="form-control" type="text" id="payment_reference" name="payment_reference" value="{{ old('payment_reference') }}" maxlength="100" placeholder="Enter the reference shown in GCash">
                             </div>
+                        </div>
+
+                        <div class="payment-fields card-fields" data-card-fields aria-hidden="true" inert>
+                            <div class="card-preview" aria-label="Card preview">
+                                <div class="card-preview__top">
+                                    <span>ARTIVA</span>
+                                    <i class="bi bi-credit-card-2-front" aria-hidden="true"></i>
+                                </div>
+                                <div class="card-preview__number" data-card-preview-number>•••• •••• •••• ••••</div>
+                                <div class="card-preview__bottom">
+                                    <span data-card-preview-name>CARDHOLDER NAME</span>
+                                    <span data-card-preview-expiry>MM/YY</span>
+                                </div>
+                            </div>
+
+                            <div class="card-fields__notice">
+                                <i class="bi bi-info-circle" aria-hidden="true"></i>
+                                <span>Demo form only. Do not enter a real card number or CVV. Card payments are unavailable until a secure payment gateway is connected.</span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="cardholder_name">Cardholder name</label>
+                                    <input class="form-control" type="text" id="cardholder_name" placeholder="Name on card" maxlength="100" autocomplete="off" data-cardholder-name>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="card_number">Card number</label>
+                                    <input class="form-control" type="text" id="card_number" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="23" autocomplete="off" data-card-number>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="card_expiry">Expiry date</label>
+                                    <input class="form-control" type="text" id="card_expiry" inputmode="numeric" placeholder="MM/YY" maxlength="5" autocomplete="off" data-card-expiry>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="card_cvv">CVV</label>
+                                    <input class="form-control" type="password" id="card_cvv" inputmode="numeric" placeholder="•••" maxlength="4" autocomplete="off" data-card-cvv>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-fields paypal-fields" data-paypal-fields aria-hidden="true" inert>
+                            <p class="payment-option__hint">PayPal checkout is not connected yet. Choose GCash to continue with the currently available manual payment process.</p>
                         </div>
 
                         <div class="payment-sandbox-note">

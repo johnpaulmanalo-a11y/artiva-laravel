@@ -218,6 +218,37 @@
     display: block;
 }
 
+.card-fields {
+    border: 1px solid var(--line);
+}
+
+.card-fields__notice {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding: 11px 13px;
+    border-radius: var(--radius-sm);
+    background: #FCF4E4;
+    border: 1px solid #F0DFBB;
+    color: #7A5514;
+    font-size: 0.78rem;
+    line-height: 1.55;
+}
+
+.card-fields__notice i {
+    margin-top: 2px;
+}
+
+.card-fields .form-label {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.card-fields .form-control {
+    width: 100%;
+}
+
 .payment-sandbox-note {
     display: flex;
     gap: 10px;

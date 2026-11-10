@@ -7,8 +7,17 @@
 
     function initPaymentMethods() {
         const options = Array.from(document.querySelectorAll('[data-payment-option]'));
-        const fields = document.querySelector('[data-gcash-fields]');
+        const gcashFields = document.querySelector('[data-gcash-fields]');
+        const cardFields = document.querySelector('[data-card-fields]');
+        const paypalFields = document.querySelector('[data-paypal-fields]');
         if (!options.length) return;
+
+        const setPanel = (panel, visible) => {
+            if (!panel) return;
+            panel.classList.toggle('is-visible', visible);
+            panel.setAttribute('aria-hidden', String(!visible));
+            panel.inert = !visible;
+        };
 
         const sync = () => {
             const selected = options.find((option) => option.querySelector('input').checked);
@@ -18,14 +27,15 @@
                 option.classList.toggle('is-selected', option === selected);
             });
 
-            if (fields) {
-                fields.classList.toggle('is-visible', method === 'gcash');
-            }
+            setPanel(gcashFields, method === 'gcash');
+            setPanel(cardFields, method === 'card');
+            setPanel(paypalFields, method === 'paypal');
         };
 
         options.forEach((option) => {
+            const input = option.querySelector('input');
+            if (input) input.addEventListener('change', sync);
             option.addEventListener('click', () => {
-                const input = option.querySelector('input');
                 if (input) input.checked = true;
                 sync();
             });
@@ -40,6 +50,14 @@
         const cvv = document.getElementById('card_cvv');
         const previewNumber = document.querySelector('[data-card-preview-number]');
         const previewExpiry = document.querySelector('[data-card-preview-expiry]');
+        const cardholder = document.querySelector('[data-cardholder-name]');
+        const previewName = document.querySelector('[data-card-preview-name]');
+
+        if (cardholder && previewName) {
+            cardholder.addEventListener('input', () => {
+                previewName.textContent = cardholder.value.trim().toUpperCase() || 'CARDHOLDER NAME';
+            });
+        }
 
         if (number) {
             number.addEventListener('input', () => {
@@ -80,7 +98,22 @@
         const form = document.querySelector('[data-checkout-form]');
         if (!form) return;
 
-        form.addEventListener('submit', () => {
+        form.addEventListener('submit', (event) => {
+            const selectedMethod = form.querySelector('input[name="payment_method"]:checked');
+
+            // Card fields are display-only until a PCI-compliant gateway is integrated.
+            if (selectedMethod && selectedMethod.value === 'card') {
+                event.preventDefault();
+                window.alert('Card payment is not available yet. Please choose GCash, or wait until a secure card payment provider is connected.');
+                return;
+            }
+
+            if (selectedMethod && selectedMethod.value === 'paypal') {
+                event.preventDefault();
+                window.alert('PayPal payment is not available yet. Please choose GCash.');
+                return;
+            }
+
             const button = form.querySelector('button[type="submit"]');
             if (button) {
                 button.classList.add('is-loading');
