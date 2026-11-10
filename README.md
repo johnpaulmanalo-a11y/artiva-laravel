@@ -61,6 +61,7 @@ Open **http://localhost:8000**.
 
 ```bash
 mysql -u root -p artiva < database/artiva-demo.sql
+php artisan migrate             # applies newer tables such as customer reviews
 php artisan storage:link
 ```
 
@@ -87,7 +88,7 @@ Seeded orders, payments, wishlist items and a populated library are created for 
 ### Public
 - **Home** — hero, featured artwork, categories, latest arrivals, value propositions.
 - **Explore artwork** — keyword search, category filter, price range, five sort orders, pagination.
-- **Artwork details** — large preview, artist, price, specs (format, resolution, file size, downloads), licence panel, add to cart / wishlist, related artwork.
+- **Artwork details** — large preview, artist, price, specs (format, resolution, file size, downloads), licence panel, add to cart / wishlist, related artwork, verified-purchase reviews and star ratings.
 - **Category page** — category hero, artwork grid, sorting, pagination, other collections.
 - **About** and **Contact** — marketing pages; the contact form stores messages in the database.
 
@@ -100,6 +101,7 @@ Seeded orders, payments, wishlist items and a populated library are created for 
 - **Checkout** — billing details, three labelled sandbox payment methods, card preview/formatting, licence agreement, order creation inside a database transaction.
 - **Order confirmation** — receipt, payment reference and download buttons.
 - **Wishlist** — toggle from any artwork card or detail page.
+- **Reviews & ratings** — verified buyers can leave or update one 1–5 star review per artwork; public pages show the average rating and paginated feedback.
 - **Order history / order details** — status filters, receipts, payment records, re-download.
 - **Purchased library** — every owned artwork with verified download links.
 - **Profile** — avatar upload, account details, password change, collection summary.
@@ -177,7 +179,7 @@ artiva/
 | `orders` | totals, status, payment status, billing snapshot | belongs to user, has many items/payments |
 | `order_items` | price/title snapshot at purchase time | belongs to order, artwork |
 | `payments` | gateway reference, amount, status, JSON payload | belongs to order |
-| `contact_messages` | contact form submissions | — |
+| `contact_messages` | contact form submissions | — |\n| `reviews` | verified-purchase ratings and comments | belongs to user and artwork; one review per user/artwork |
 
 Checkout runs inside `DB::transaction()`: the order, its items and the payment row are written together, and the cart is only emptied after all of them succeed.
 

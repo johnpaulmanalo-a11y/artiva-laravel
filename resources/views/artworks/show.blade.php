@@ -116,6 +116,70 @@
                 </div>
             </div>
 
+            <section class="artwork-reviews" aria-labelledby="reviews-title" style="margin-top: 64px;">
+                <div class="section-head">
+                    <div class="section-head__text">
+                        <p class="eyebrow">Community feedback</p>
+                        <h2 class="display-2" id="reviews-title">Reviews &amp; ratings</h2>
+                    </div>
+                    <div class="review-summary">
+                        <strong>{{ $reviewCount ? number_format($averageRating, 1) : '—' }}</strong>
+                        <span aria-label="{{ $averageRating }} out of 5 stars">
+                            @for ($star = 1; $star <= 5; $star++)
+                                <i class="bi {{ $star <= round($averageRating) ? 'bi-star-fill' : 'bi-star' }}" aria-hidden="true"></i>
+                            @endfor
+                        </span>
+                        <small>{{ $reviewCount }} {{ Str::plural('review', $reviewCount) }}</small>
+                    </div>
+                </div>
+
+                @auth
+                    @if ($purchased)
+                        <form method="POST" action="{{ route('reviews.store', $artwork) }}" class="review-form">
+                            @csrf
+                            <h3>{{ $myReview ? 'Update your review' : 'Share your experience' }}</h3>
+                            <label for="review-rating">Your rating</label>
+                            <select id="review-rating" name="rating" required>
+                                @foreach ([5 => '5 - Excellent', 4 => '4 - Very good', 3 => '3 - Good', 2 => '2 - Fair', 1 => '1 - Poor'] as $value => $label)
+                                    <option value="{{ $value }}" @selected(old('rating', $myReview?->rating ?? 5) == $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            <label for="review-comment">Comment (optional)</label>
+                            <textarea id="review-comment" name="comment" rows="3" maxlength="1000" placeholder="What did you think about this artwork?">{{ old('comment', $myReview?->comment) }}</textarea>
+                            @error('rating') <p class="form-error">{{ $message }}</p> @enderror
+                            @error('comment') <p class="form-error">{{ $message }}</p> @enderror
+                            <button class="btn btn-ink" type="submit">{{ $myReview ? 'Update review' : 'Submit review' }}</button>
+                        </form>
+                    @else
+                        <p class="review-note">Only customers who have purchased this artwork can leave a review.</p>
+                    @endif
+                @else
+                    <p class="review-note"><a href="{{ route('login') }}">Sign in</a> to see whether you can review this artwork.</p>
+                @endauth
+
+                <div class="review-list">
+                    @forelse ($reviews as $review)
+                        <article class="review-item">
+                            <div class="review-item__head">
+                                <strong>{{ $review->user->name }}</strong>
+                                <span>
+                                    @for ($star = 1; $star <= 5; $star++)
+                                        <i class="bi {{ $star <= $review->rating ? 'bi-star-fill' : 'bi-star' }}" aria-hidden="true"></i>
+                                    @endfor
+                                </span>
+                                <small>{{ $review->created_at->format('M d, Y') }}</small>
+                            </div>
+                            @if ($review->comment)
+                                <p>{{ $review->comment }}</p>
+                            @endif
+                        </article>
+                    @empty
+                        <p class="review-note">No reviews yet. Be the first verified buyer to share your experience.</p>
+                    @endforelse
+                </div>
+                {{ $reviews->links() }}
+            </section>
+
             @if ($related->isNotEmpty())
                 <section class="related-artworks" aria-labelledby="related-artworks-title">
                     <div class="section-head">

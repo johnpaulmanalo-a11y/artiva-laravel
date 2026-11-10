@@ -48,6 +48,24 @@ class StorefrontTest extends TestCase
         $response->assertSee('Personal-use licence');
     }
 
+    public function test_customers_cannot_review_artwork_they_have_not_purchased(): void
+    {
+        $customer = \App\Models\User::query()->where('role', 'customer')->firstOrFail();
+        $artwork = Artwork::query()->whereDoesntHave('orderItems')->firstOrFail();
+
+        $this->actingAs($customer)
+            ->post(route('reviews.store', $artwork), [
+                'rating' => 5,
+                'comment' => 'This is a great artwork.',
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing('reviews', [
+            'user_id' => $customer->id,
+            'artwork_id' => $artwork->id,
+        ]);
+    }
+
     public function test_money_uses_the_configured_peso_symbol(): void
     {
         config([

@@ -11,6 +11,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -71,6 +72,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/{artwork}', [CartController::class, 'store'])->name('cart.store');
     Route::delete('/cart/{artwork}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
+
+    // Verified-purchase artwork reviews
+    Route::post('/artworks/{artwork}/reviews', [ReviewController::class, 'store'])->middleware('throttle:5,1')->name('reviews.store');
 
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');

@@ -63,6 +63,9 @@ class ArtworkController extends Controller
         abort_unless($artwork->is_active || auth()->user()?->isAdmin(), 404);
 
         $artwork->load('category');
+        $reviews = $artwork->reviews()->with('user')->latest()->paginate(5);
+        $averageRating = round((float) $artwork->reviews()->avg('rating'), 1);
+        $myReview = auth()->user()?->reviews()->where('artwork_id', $artwork->id)->first();
 
         $related = Artwork::query()
             ->active()
@@ -96,6 +99,10 @@ class ArtworkController extends Controller
             'inWishlist' => $inWishlist,
             'inCart' => $inCart,
             'purchased' => $purchased,
+            'reviews' => $reviews,
+            'averageRating' => $averageRating,
+            'reviewCount' => $artwork->reviews()->count(),
+            'myReview' => $myReview,
         ]);
     }
 }
