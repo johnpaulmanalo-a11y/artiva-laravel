@@ -106,6 +106,8 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
+// All administrative pages and CRUD actions must stay inside this protected group.
+// This is also the security boundary to use when adding the Week 14 CRUD routes.
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')

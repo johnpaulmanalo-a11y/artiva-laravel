@@ -68,6 +68,24 @@ class AuthTest extends TestCase
             ->assertSee('Total revenue');
     }
 
+
+    public function test_guests_are_redirected_to_login_from_dashboard_and_admin_crud(): void
+    {
+        $this->get('/admin')->assertRedirect('/login');
+        $this->get('/admin/artworks')->assertRedirect('/login');
+        $this->get('/admin/categories')->assertRedirect('/login');
+        $this->post('/admin/artworks')->assertRedirect('/login');
+    }
+
+    public function test_customers_cannot_access_admin_crud_actions(): void
+    {
+        $customer = User::where('email', 'customer@artiva.test')->firstOrFail();
+
+        $this->actingAs($customer)->get('/admin/categories')->assertForbidden();
+        $this->actingAs($customer)->post('/admin/categories', [])->assertForbidden();
+        $this->actingAs($customer)->get('/admin/reports')->assertForbidden();
+    }
+
     public function test_customer_cannot_open_admin_pages(): void
     {
         $customer = User::where('email', 'customer@artiva.test')->firstOrFail();

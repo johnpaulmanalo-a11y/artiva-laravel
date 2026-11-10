@@ -15,7 +15,12 @@ class EnsureUserIsAdmin
     {
         $user = $request->user();
 
-        if (! $user || ! $user->isAdmin()) {
+        // Keep this middleware safe even if a route is accidentally missing `auth`.
+        if (! $user) {
+            return redirect()->guest(route('login'));
+        }
+
+        if (! $user->isAdmin()) {
             abort(403, 'This area is restricted to Artiva administrators.');
         }
 
