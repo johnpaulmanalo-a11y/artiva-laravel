@@ -93,7 +93,7 @@ class AuthTest extends TestCase
 
     public function test_admin_can_open_the_dashboard(): void
     {
-        $admin = User::where('email', 'admin@artiva.test')->firstOrFail();
+        $admin = User::where('email', 'jpcomes.globalmktg@gmail.com')->firstOrFail();
 
         $this->actingAs($admin)
             ->get('/admin')
