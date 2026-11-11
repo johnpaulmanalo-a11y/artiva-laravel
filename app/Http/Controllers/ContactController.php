@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMessageReceived;
 use App\Models\ContactMessage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ContactController extends Controller
 {
@@ -23,7 +27,15 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'min:10', 'max:2000'],
         ]);
 
-        ContactMessage::create($data);
+        // Naka-save pa rin sa database bilang backup, tapos i-email din.
+        $contactMessage = ContactMessage::create($data);
+
+        try {
+            Mail::to(config('mail.contact_to'))->send(new ContactMessageReceived($contactMessage));
+        } catch (Throwable $e) {
+            // Hindi mawawala ang message kahit pumalya ang email; nasa DB pa rin.
+            Log::error('Contact email failed: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('contact')
