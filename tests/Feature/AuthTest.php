@@ -30,6 +30,37 @@ class AuthTest extends TestCase
         $this->assertAuthenticatedAs($customer);
     }
 
+    public function test_auth_pages_render_with_the_existing_artiva_layout(): void
+    {
+        $this->get('/login')
+            ->assertOk()
+            ->assertSee('css/auth.css')
+            ->assertSee('Sign in to reach your cart');
+
+        $this->get('/register')
+            ->assertOk()
+            ->assertSee('Create your account')
+            ->assertSee('name="phone"', false);
+
+        $this->get('/forgot-password')
+            ->assertOk()
+            ->assertSee('Email password reset link');
+
+        $this->get('/reset-password/test-token?email=collector%40example.com')
+            ->assertOk()
+            ->assertSee('Choose a new password');
+    }
+
+    public function test_customer_profile_still_uses_the_storefront_profile_page(): void
+    {
+        $customer = User::where('email', 'customer@artiva.test')->firstOrFail();
+
+        $this->actingAs($customer)
+            ->get('/profile')
+            ->assertOk()
+            ->assertSee('My profile');
+    }
+
     public function test_invalid_credentials_are_rejected(): void
     {
         $response = $this->from('/login')->post('/login', [
@@ -46,6 +77,7 @@ class AuthTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'New Collector',
             'email' => 'collector@example.com',
+            'phone' => '+1 555 0100',
             'password' => 'Password123',
             'password_confirmation' => 'Password123',
         ]);
@@ -55,6 +87,7 @@ class AuthTest extends TestCase
 
         $user = User::where('email', 'collector@example.com')->firstOrFail();
         $this->assertSame(User::ROLE_CUSTOMER, $user->role);
+        $this->assertSame('+1 555 0100', $user->phone);
         $this->assertTrue(Hash::check('Password123', $user->password));
     }
 
@@ -67,7 +100,6 @@ class AuthTest extends TestCase
             ->assertOk()
             ->assertSee('Total revenue');
     }
-
 
     public function test_guests_are_redirected_to_login_from_dashboard_and_admin_crud(): void
     {

@@ -18,12 +18,7 @@
                 <label class="form-label" for="password">Password</label>
                 <a class="auth-form__link" href="{{ route('password.request') }}">Forgot password?</a>
             </div>
-            <div style="position: relative;">
-                <input class="form-control" type="password" id="password" name="password" required autocomplete="current-password" placeholder="Your password" style="padding-right: 46px;">
-                <button class="icon-btn" type="button" data-toggle-password="password" aria-label="Show password" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; color: var(--muted-soft);">
-                    <i class="bi bi-eye"></i>
-                </button>
-            </div>
+            <input class="form-control" type="password" id="password" name="password" required autocomplete="current-password" placeholder="Your password">
         </div>
 
         <div class="auth-form__row">
@@ -36,7 +31,7 @@
         <button class="btn btn-ink btn-block" type="submit">
             Sign in <i class="bi bi-arrow-right"></i>
         </button>
-
+    </form>
 @endsection
 
 @section('foot')

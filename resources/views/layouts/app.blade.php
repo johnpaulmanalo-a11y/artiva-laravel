@@ -27,12 +27,24 @@
 
     @include('components.navbar')
 
+    @isset($header)
+        <header class="bg-white shadow">
+            <div class="container py-4">
+                {{ $header }}
+            </div>
+        </header>
+    @endisset
+
     <main id="main-content">
         <div class="container pt-4">
             @include('components.alert')
         </div>
 
-        @yield('content')
+        @if (isset($slot))
+            {{ $slot }}
+        @else
+            @yield('content')
+        @endif
     </main>
 
     @include('components.footer')

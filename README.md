@@ -209,7 +209,7 @@ Password reset emails use `MAIL_MAILER=log`, so the reset link is written to `st
 php artisan test
 ```
 
-18 feature tests / 52 assertions cover the storefront, authentication, role protection, cart, checkout, downloads and order privacy.
+18 feature tests / 63 assertions cover the storefront, authentication, role protection, cart, checkout, downloads and order privacy.
 
 ---
 

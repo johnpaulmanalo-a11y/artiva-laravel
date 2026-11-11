@@ -20,17 +20,12 @@
 
         <div>
             <label class="form-label" for="phone">Phone <span class="text-muted-soft" style="text-transform: none; letter-spacing: 0;">(optional)</span></label>
-            <input class="form-control" type="text" id="phone" name="phone" value="{{ old('phone') }}" autocomplete="tel" maxlength="30" placeholder="+1 555 0100">
+            <input class="form-control" type="tel" id="phone" name="phone" value="{{ old('phone') }}" autocomplete="tel" maxlength="30" placeholder="+1 555 0100">
         </div>
 
         <div>
             <label class="form-label" for="password">Password</label>
-            <div style="position: relative;">
-                <input class="form-control" type="password" id="password" name="password" required autocomplete="new-password" placeholder="At least 8 characters" style="padding-right: 46px;">
-                <button class="icon-btn" type="button" data-toggle-password="password" aria-label="Show password" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; color: var(--muted-soft);">
-                    <i class="bi bi-eye"></i>
-                </button>
-            </div>
+            <input class="form-control" type="password" id="password" name="password" required autocomplete="new-password" placeholder="At least 8 characters">
             <p class="form-text">Use at least 8 characters with upper and lower case letters and a number.</p>
         </div>
 

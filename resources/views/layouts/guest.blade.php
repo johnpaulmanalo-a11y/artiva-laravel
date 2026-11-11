@@ -61,13 +61,16 @@
                         <span class="brand__mark">A</span>
                         <span class="brand__word">Artiva</span>
                     </a>
-                    <h2 class="guest-card__title">@yield('heading', 'Welcome back')</h2>
+                    <h1 class="guest-card__title">@yield('heading', 'Welcome back')</h1>
                     <p class="guest-card__subtitle">@yield('subheading', 'Sign in to keep collecting.')</p>
                 </div>
 
                 @include('components.alert', ['compact' => true])
-
-                @yield('content')
+                @if (isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
 
                 <div class="guest-card__foot">
                     @yield('foot')

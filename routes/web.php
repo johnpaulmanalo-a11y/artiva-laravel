@@ -41,13 +41,13 @@ Route::get('/categories/{category}', [CategoryController::class, 'show'])->name(
 */
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [Auth\LoginController::class, 'create'])->name('login');
-    Route::post('/login', [Auth\LoginController::class, 'store'])
+    Route::get('/login', [Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [Auth\AuthenticatedSessionController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('login.store');
 
-    Route::get('/register', [Auth\RegisterController::class, 'create'])->name('register');
-    Route::post('/register', [Auth\RegisterController::class, 'store'])->name('register.store');
+    Route::get('/register', [Auth\RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [Auth\RegisteredUserController::class, 'store'])->name('register.store');
 
     Route::get('/forgot-password', [Auth\PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('/forgot-password', [Auth\PasswordResetLinkController::class, 'store'])->name('password.email');
@@ -56,7 +56,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [Auth\NewPasswordController::class, 'store'])->name('password.store');
 });
 
-Route::post('/logout', [Auth\LoginController::class, 'destroy'])
+Route::post('/logout', [Auth\AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
