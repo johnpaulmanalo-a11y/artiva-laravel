@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
 </head>
 <body class="admin-body">
     <div class="admin-shell">
