@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Artwork;
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -46,6 +48,19 @@ class StorefrontTest extends TestCase
         $response->assertSee($artwork->title);
         $response->assertSee(money($artwork->price));
         $response->assertSee('Personal-use licence');
+    }
+
+    public function test_customer_can_view_order_details_from_order_history(): void
+    {
+        $order = Order::query()->firstOrFail();
+        $customer = User::query()->findOrFail($order->user_id);
+
+        $this->actingAs($customer)
+            ->get(route('orders.show', $order))
+            ->assertOk()
+            ->assertSee('Items in this order')
+            ->assertSee($order->order_number)
+            ->assertDontSee('Update status');
     }
 
     public function test_customers_cannot_review_artwork_they_have_not_purchased(): void
