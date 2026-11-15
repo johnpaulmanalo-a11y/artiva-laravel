@@ -14,11 +14,13 @@ class Artwork extends Model
 {
     use HasFactory;
 
+    protected $with = ['artist'];
+
     protected $fillable = [
         'category_id',
+        'artist_id',
         'title',
         'slug',
-        'artist_name',
         'description',
         'preview_path',
         'file_path',
@@ -61,6 +63,16 @@ class Artwork extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function artist(): BelongsTo
+    {
+        return $this->belongsTo(Artist::class);
+    }
+
+    public function getArtistNameAttribute(): string
+    {
+        return $this->artist?->name ?? 'Unknown Artist';
+    }
+
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
@@ -96,7 +108,7 @@ class Artwork extends Model
 
         return $query->where(function (Builder $query) use ($like) {
             $query->where('title', 'like', $like)
-                ->orWhere('artist_name', 'like', $like)
+                ->orWhereHas('artist', fn (Builder $artist) => $artist->where('name', 'like', $like))
                 ->orWhere('description', 'like', $like);
         });
     }

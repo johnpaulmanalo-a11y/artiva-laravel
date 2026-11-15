@@ -165,11 +165,43 @@
                             </div>
                         </dl>
                     @endforeach
-                    <form method="POST" action="{{ route('admin.orders.verify-payment', $order) }}" onsubmit="return confirm('Have you independently confirmed the exact amount was received in your GCash/bank/provider account?');">
+                    <form method="POST" action="{{ route('admin.orders.verify-payment', $order) }}" onsubmit="return confirm('Have you independently confirmed the exact amount and transaction reference in your GCash/bank/provider account?');">
                         @csrf
                         @method('PATCH')
+                        <input type="hidden" name="confirm_received" value="1">
+                        <div style="margin: 12px 0;">
+                            <label class="form-label" for="verified_transaction_id">Verified provider transaction reference</label>
+                            <input class="form-control" id="verified_transaction_id" name="verified_transaction_id" value="{{ $order->payments->last()?->provider_reference }}" maxlength="100" required>
+                        </div>
                         <button class="btn btn-ink" type="submit">Mark payment verified</button>
                     </form>
+                </div>
+            @endif
+
+            @if ($order->receipt)
+                <div class="admin-card" style="margin-top: 20px;">
+                    <div class="admin-card__head">
+                        <div>
+                            <h3>Official receipt</h3>
+                            <p>{{ $order->receipt->receipt_number }} &middot; Issued {{ $order->receipt->issued_at->format('j M Y, g:i a') }}</p>
+                        </div>
+                    </div>
+                    <p class="text-muted-soft">
+                        @if ($order->receipt->email_sent_at)
+                            Emailed {{ $order->receipt->email_sent_at->format('j M Y, g:i a') }} to {{ $order->user->email }}.
+                        @else
+                            Email delivery has not been confirmed for {{ $order->user->email }}.
+                        @endif
+                    </p>
+                    <div class="admin-page-head__actions">
+                        <a class="btn btn-outline-ink btn-sm" href="{{ route('orders.receipt', $order) }}">View receipt</a>
+                        @if (!$order->receipt->email_sent_at)
+                            <form method="POST" action="{{ route('admin.orders.receipts.send', $order) }}">
+                                @csrf
+                                <button class="btn btn-ink btn-sm" type="submit">Send / retry receipt email</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             @endif
 
@@ -187,6 +219,9 @@
                             <div class="payment-record__meta">
                                 {{ ucfirst($payment->method) }} &middot;
                                 {{ $payment->paid_at ? $payment->paid_at->format('j M Y, g:i a') : 'Pending' }}
+                                @if ($payment->verifiedBy)
+                                    &middot; Verified by {{ $payment->verifiedBy->name }} at {{ $payment->verified_at->format('j M Y, g:i a') }}
+                                @endif
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-3">

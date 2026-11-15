@@ -2,7 +2,7 @@
 
 A complete digital-artwork e-commerce application built with **Laravel 11, Blade, MySQL, Bootstrap 5, CSS and vanilla JavaScript**. Every page has its own Blade view, route, controller action and (where needed) its own stylesheet and script.
 
-The storefront is a curated gallery: customers browse artwork, filter and sort the catalogue, save pieces to a wishlist, check out through a clearly labelled simulated payment gateway, and download the high-resolution master files from a private library. Administrators manage the catalogue, categories, orders, customers and sales reports from a separate dashboard.
+The storefront is a curated gallery: customers browse artwork and artist profiles, filter and sort the catalogue, save pieces to a wishlist, check out through a clearly labelled simulated payment gateway, and download the high-resolution master files from a private library. Administrators manage artists, the catalogue, categories, orders, customers and sales reports from a separate dashboard.
 
 ---
 
@@ -16,6 +16,24 @@ The storefront is a curated gallery: customers browse artwork, filter and sort t
 | Web browser | Any modern browser |
 
 No Node.js or build step is required — Bootstrap 5, Bootstrap Icons and the Google Fonts (Montserrat, Lato, Playfair Display) are loaded from CDNs.
+
+## Database connections and safe copies
+
+The application uses the single connection selected by `DB_CONNECTION`. Registration, checkout, admin pages and Eloquent models all use that same default connection. Selecting SQLite does not import a MySQL database, and switching `DB_CONNECTION` does not move any records.
+
+Use separate database-name variables when keeping both databases configured:
+
+```dotenv
+DB_CONNECTION=sqlite
+DB_SQLITE_DATABASE=database/database.sqlite
+DB_MYSQL_HOST=127.0.0.1
+DB_MYSQL_PORT=3307
+DB_MYSQL_DATABASE=Artiva
+```
+
+For XAMPP, use the port configured by MySQL (this installation listens on `3307`). Set `DB_MYSQL_DATABASE` to the actual existing MySQL schema name before selecting `DB_CONNECTION=mysql`; if needed, set `DB_MYSQL_USERNAME` and `DB_MYSQL_PASSWORD` locally without sharing them. The older `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` values remain compatibility fallbacks. After changing connection settings, run `php artisan config:clear` and `php artisan migrate:status`; do not use `migrate:fresh` on a database with records.
+
+Before any database migration, take a separate MySQL dump and verify that it is non-empty and restorable. A MySQL dump is a backup, not a MySQL-to-SQLite conversion: create the SQLite schema from the Laravel migrations and copy data with a migration tool that preserves IDs, foreign keys, indexes and all application tables. Keep the original MySQL database untouched until the copied database has been checked. The project already contains a populated `database/database.sqlite`; do not overwrite it when creating another copy.
 
 ---
 
@@ -88,7 +106,8 @@ Seeded orders, payments, wishlist items and a populated library are created for 
 ### Public
 - **Home** — hero, featured artwork, categories, latest arrivals, value propositions.
 - **Explore artwork** — keyword search, category filter, price range, five sort orders, pagination.
-- **Artwork details** — large preview, artist, price, specs (format, resolution, file size, downloads), licence panel, add to cart / wishlist, related artwork, verified-purchase reviews and star ratings.
+- **Artist directory and profiles** — searchable artist cards, profile photos, biographies, specializations, portfolio/social links and linked artwork.
+- **Artwork details** — large preview, linked artist profile, price, specs (format, resolution, file size, downloads), licence panel, add to cart / wishlist, related artwork, verified-purchase reviews and star ratings.
 - **Category page** — category hero, artwork grid, sorting, pagination, other collections.
 - **About** and **Contact** — marketing pages; the contact form stores messages in the database.
 
@@ -99,7 +118,7 @@ Seeded orders, payments, wishlist items and a populated library are created for 
 ### Customer
 - **Cart** — add, remove, clear, order summary (each artwork is a single personal-use licence).
 - **Checkout** — billing details, three labelled sandbox payment methods, card preview/formatting, licence agreement, order creation inside a database transaction.
-- **Order confirmation** — receipt, payment reference and download buttons.
+- **Order confirmation** — order and payment status; downloads remain locked until payment verification.
 - **Wishlist** — toggle from any artwork card or detail page.
 - **Reviews & ratings** — verified buyers can leave or update one 1–5 star review per artwork; public pages show the average rating and paginated feedback.
 - **Order history / order details** — status filters, receipts, payment records, re-download.
@@ -108,11 +127,21 @@ Seeded orders, payments, wishlist items and a populated library are created for 
 
 ### Admin (`/admin`)
 - **Dashboard** — revenue, orders, customers, catalogue metrics, six-month revenue chart, best sellers, recent orders, category distribution.
+- **Artists** — searchable artist directory, profile photo uploads, biography/specialization/social links, and guarded deletion while artworks remain assigned.
 - **Artworks** — searchable/filterable list, create, edit, delete (blocked when sales exist), separate public preview and private master-file uploads.
 - **Categories** — create, edit, delete (blocked while artwork exists), visibility toggles.
 - **Orders** — search, status filter, full order review, status updates (refunding marks the payment refunded).
 - **Customers** — search, order counts, lifetime spend, individual customer profiles.
 - **Sales reports** — date-range revenue report, monthly chart, top artwork, revenue by category, status mix, top customers.
+
+### Managing artist profiles
+
+1. Sign in as an administrator and open **Admin → Artists → Add artist**.
+2. Enter the artist’s name and optional biography, specialization, portrait and portfolio/social links, then save.
+3. Open **Admin → Artworks**, create or edit an artwork, choose the artist from the **Artist** selector and save.
+4. Customers can open the public **Artists** directory or click an artist name on an artwork card/details page.
+
+An artist profile cannot be deleted while artworks are assigned to it. Reassign those artworks first; this preserves artwork and sales history.
 
 ---
 
@@ -123,33 +152,33 @@ artiva/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── HomeController.php          ArtworkController.php
+│   │   │   ├── HomeController.php          ArtworkController.php ArtistController.php
 │   │   │   ├── CategoryController.php      CartController.php
 │   │   │   ├── WishlistController.php      CheckoutController.php
 │   │   │   ├── OrderController.php         LibraryController.php
 │   │   │   ├── ProfileController.php       ContactController.php
 │   │   │   ├── Auth/ (Login, Register, PasswordResetLink, NewPassword)
-│   │   │   └── Admin/ (Dashboard, Artwork, Category, Order, Customer, Report)
+│   │   │   └── Admin/ (Dashboard, Artwork, Artist, Category, Order, Customer, Report)
 │   │   └── Middleware/EnsureUserIsAdmin.php
-│   ├── Models/  User, Category, Artwork, Cart, CartItem, Wishlist, Order, OrderItem, Payment, ContactMessage
+│   ├── Models/  User, Artist, Category, Artwork, Cart, CartItem, Wishlist, Order, OrderItem, Payment, ContactMessage
 │   ├── Providers/AppServiceProvider.php
 │   └── Support/ helpers.php, SalesReport.php
 ├── config/ artiva.php, filesystems.php (explicit public/private disks)
 ├── database/
-│   ├── migrations/ (10 migrations)
+│   ├── migrations/ (users, artists, catalogue, checkout and supporting tables)
 │   ├── seeders/    (Database, User, Category, Artwork, Order)
 │   └── artiva-demo.sql
 ├── public/
 │   ├── css/ app.css, home.css, artworks.css, artwork-details.css,
 │   │        about.css, contact.css, auth.css, cart.css, checkout.css,
-│   │        wishlist.css, orders.css, library.css, profile.css, admin.css
+│   │        wishlist.css, orders.css, library.css, profile.css, artists.css, admin.css
 │   ├── js/  app.js, home.js, artworks.js, cart.js, checkout.js, admin.js
 │   └── images/ logo/, placeholders/
 ├── resources/views/
 │   ├── layouts/ app, guest, admin
 │   ├── components/ navbar, footer, artwork-card, alert, admin-sidebar
 │   ├── home, about, contact
-│   ├── artworks/ index, show        categories/ show
+│   ├── artworks/ index, show        artists/ index, show        categories/ show
 │   ├── auth/ login, register, forgot-password, reset-password
 │   ├── cart/ index                  checkout/ index, success
 │   ├── wishlist/ index              orders/ index, show
@@ -172,7 +201,8 @@ artiva/
 | `users` | customers and admins (`role` enum) | has many orders, cart, wishlist |
 | `password_reset_tokens` | reset tokens | — |
 | `categories` | catalogue categories | has many artworks |
-| `artworks` | artwork listings, `preview_path` (public), `file_path` (private) | belongs to category |
+| `artists` | artist profile, portrait and portfolio links | has many artworks |
+| `artworks` | artwork listings, `preview_path` (public), `file_path` (private) | belongs to category and artist |
 | `carts` | one cart per user | has many cart items |
 | `cart_items` | unique artwork per cart | belongs to cart, artwork |
 | `wishlists` | saved artwork per user (unique pair) | belongs to user, artwork |
@@ -190,6 +220,7 @@ Checkout runs inside `DB::transaction()`: the order, its items and the payment r
 - **Admin routes** are protected by `auth` + the `admin` middleware (`EnsureUserIsAdmin`); customers receive a 403 page.
 - **Downloads** are authorised against the signed-in customer's paid order items — a user cannot download an artwork they have not bought, and cannot open another customer's order (404).
 - **Master files** live on the private disk (`storage/app/private/artworks`) and are streamed through a controller. Only previews and avatars are on the public disk.
+- Artist portraits are validated image uploads stored on Laravel’s public disk; artist deletion is blocked until linked artwork is reassigned.
 - All forms use CSRF tokens, all input is server-side validated, passwords are hashed with bcrypt, and login/contact routes are rate limited.
 - Artwork deletion is refused when sales history exists; categories with artwork cannot be deleted.
 
@@ -197,7 +228,7 @@ Checkout runs inside `DB::transaction()`: the order, its items and the payment r
 
 ## 8. Payments
 
-`config/artiva.php` sets `payment_gateway` to `simulated`, and `.env` controls the currency (`APP_CURRENCY`, `APP_CURRENCY_SYMBOL`). The checkout page clearly labels the card, PayPal and direct gateway options as a **sandbox**: card numbers are validated for format only and no real charge is made. The resulting `payments` row stores a `SIM-…` reference and a JSON payload explaining that it was a demo transaction — a real gateway (Stripe, PayMongo, Xendit…) can later replace `CheckoutController@store`.
+The checkout page accepts GCash, card and PayPal order selections but does not process a real charge. Orders remain pending until an administrator independently confirms the received amount and provider transaction reference. A customer-supplied reference or screenshot alone cannot verify payment. Once verified, Artiva records the administrator and verification time, issues one receipt per order, and emails it to the registered customer address. A real gateway callback can replace this manual review flow later.
 
 Password reset emails use `MAIL_MAILER=log`, so the reset link is written to `storage/logs/laravel.log` — useful for a classroom demonstration without an SMTP account.
 
@@ -209,7 +240,7 @@ Password reset emails use `MAIL_MAILER=log`, so the reset link is written to `st
 php artisan test
 ```
 
-18 feature tests / 63 assertions cover the storefront, authentication, role protection, cart, checkout, downloads and order privacy.
+Feature tests cover the artist directory and admin management, storefront, authentication, role protection, cart, checkout, downloads, receipts and order privacy. PHPUnit is configured to use an in-memory SQLite database so test runs do not alter the local application database.
 
 ---
 

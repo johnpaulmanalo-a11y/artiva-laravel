@@ -45,7 +45,9 @@
 
                     <div>
                         <h1 class="artwork-panel__title">{{ $artwork->title }}</h1>
-                        <p class="artwork-panel__artist">Created by <strong>{{ $artwork->artist_name }}</strong></p>
+                        <p class="artwork-panel__artist">Created by
+                            <a href="{{ route('artists.show', $artwork->artist) }}"><strong>{{ $artwork->artist->name }}</strong></a>
+                        </p>
                     </div>
 
                     <div class="artwork-panel__price">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artwork;
+use App\Models\Artist;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +25,7 @@ class ArtworkController extends Controller
         $sort = $filters['sort'] ?? 'newest';
 
         $artworks = Artwork::query()
-            ->with('category')
+            ->with(['category', 'artist'])
             ->withCount('orderItems')
             ->search($filters['q'] ?? null)
             ->when($filters['category'] ?? null, fn ($query, $category) => $query->where('category_id', $category))
@@ -52,6 +53,7 @@ class ArtworkController extends Controller
         return view('admin.artworks.create', [
             'artwork' => new Artwork(['is_active' => true, 'file_format' => 'PNG']),
             'categories' => Category::query()->orderBy('name')->get(),
+            'artists' => Artist::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -78,7 +80,7 @@ class ArtworkController extends Controller
 
     public function show(Artwork $artwork): View
     {
-        $artwork->load('category')
+        $artwork->load('category', 'artist')
             ->loadCount(['orderItems as sold_count' => fn ($query) => $query->whereHas('order', fn ($order) => $order->paid())]);
 
         return view('admin.artworks.show', [
@@ -99,6 +101,7 @@ class ArtworkController extends Controller
         return view('admin.artworks.edit', [
             'artwork' => $artwork,
             'categories' => Category::query()->orderBy('name')->get(),
+            'artists' => Artist::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -160,7 +163,7 @@ class ArtworkController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:150'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'artist_name' => ['required', 'string', 'max:120'],
+            'artist_id' => ['required', 'integer', 'exists:artists,id'],
             'description' => ['required', 'string', 'min:20', 'max:4000'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999'],
             'file_format' => ['required', 'string', 'max:10'],

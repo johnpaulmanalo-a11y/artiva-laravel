@@ -49,7 +49,7 @@ class CheckoutController extends Controller
             'billing_address' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:500'],
             'payment_method' => ['required', 'in:gcash,card,paypal'],
-            'payment_reference' => ['nullable', 'required_if:payment_method,gcash', 'string', 'max:100'],
+            'payment_reference' => ['nullable', 'required_if:payment_method,gcash', 'string', 'max:100', 'unique:payments,provider_reference'],
             'terms' => ['accepted'],
         ], [
             'terms.accepted' => 'Please accept the Artiva licence terms to continue.',
@@ -105,7 +105,8 @@ class CheckoutController extends Controller
             Payment::create([
                 'order_id' => $order->id,
                 'method' => $data['payment_method'],
-                'transaction_id' => null,
+                'transaction_id' => Payment::generateTransactionId(),
+                'provider_reference' => $data['payment_reference'] ?? null,
                 'amount' => $total,
                 'status' => Order::PAYMENT_PENDING,
                 'payload' => [

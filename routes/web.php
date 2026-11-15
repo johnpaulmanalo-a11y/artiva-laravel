@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\ArtworkController;
+use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -31,6 +32,8 @@ Route::post('/contact', [ContactController::class, 'send'])
 
 Route::get('/artworks', [ArtworkController::class, 'index'])->name('artworks.index');
 Route::get('/artworks/{artwork}', [ArtworkController::class, 'show'])->name('artworks.show');
+Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
+Route::get('/artists/{artist}', [ArtistController::class, 'show'])->name('artists.show');
 
 Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
@@ -88,6 +91,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
 
     // Purchased artwork library
     Route::get('/library', [LibraryController::class, 'index'])->name('library.index');
@@ -115,12 +119,14 @@ Route::middleware(['auth', 'admin'])
         Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('artworks', Admin\ArtworkController::class);
+        Route::resource('artists', Admin\ArtistController::class)->except('show');
         Route::resource('categories', Admin\CategoryController::class)->except('show');
 
         Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
         Route::patch('/orders/{order}/status', [Admin\OrderController::class, 'updateStatus'])->name('orders.status');
         Route::patch('/orders/{order}/verify-payment', [Admin\OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
+        Route::post('/orders/{order}/receipt-email', [Admin\OrderController::class, 'sendReceiptEmail'])->name('orders.receipts.send');
 
         Route::get('/customers', [Admin\CustomerController::class, 'index'])->name('customers.index');
         Route::get('/customers/{user}', [Admin\CustomerController::class, 'show'])->name('customers.show');

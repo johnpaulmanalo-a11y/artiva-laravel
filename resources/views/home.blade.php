@@ -59,7 +59,7 @@
                 @if ($heroMain)
                     <figure class="hero__frame hero__frame--main">
                         @if ($heroMain->previewUrl())
-                            <img src="{{ asset('images/kai.jpg') }}" alt="Kai artwork">
+                            <img src="{{ asset('images/kai.jpg') }}" alt="Kai">
                         @endif
                     </figure>
                 @endif
@@ -67,7 +67,7 @@
                 @if ($heroSub)
                     <figure class="hero__frame hero__frame--sub">
                         @if ($heroSub->previewUrl())
-                            <img src="{{ asset('images/jp.jpg') }}" alt="artist">
+                            <img src="{{ asset('images/jp.jpg') }}" alt="JP">
                         @endif
                     </figure>
                 @endif

@@ -120,6 +120,11 @@
                             <a class="btn btn-ink btn-block" href="{{ route('library.index') }}">
                                 <i class="bi bi-collection"></i> Go to my library
                             </a>
+                            @if ($order->receipt)
+                                <a class="btn btn-outline-ink btn-block" href="{{ route('orders.receipt', $order) }}">
+                                    <i class="bi bi-receipt"></i> View official receipt
+                                </a>
+                            @endif
                         @endif
                     </section>
 

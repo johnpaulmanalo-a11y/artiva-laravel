@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artwork;
+use App\Models\Artist;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\User;
@@ -77,7 +78,7 @@ class HomeController extends Controller
     {
         return [
             'artworks' => Artwork::query()->active()->count(),
-            'artists' => Artwork::query()->active()->distinct()->count('artist_name'),
+            'artists' => Artist::query()->whereHas('artworks', fn ($query) => $query->active())->count(),
             'customers' => User::query()->where('role', User::ROLE_CUSTOMER)->count(),
             'orders' => Order::query()->paid()->count(),
         ];

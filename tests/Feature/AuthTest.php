@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -51,6 +53,18 @@ class AuthTest extends TestCase
             ->assertSee('Choose a new password');
     }
 
+    public function test_mail_transport_failure_shows_a_friendly_password_reset_error(): void
+    {
+        Password::shouldReceive('sendResetLink')
+            ->once()
+            ->andThrow(new TransportException('SMTP unavailable'));
+
+        $this->from('/forgot-password')
+            ->post('/forgot-password', ['email' => 'mara@artiva.test'])
+            ->assertRedirect('/forgot-password')
+            ->assertSessionHasErrors(['email' => 'The password reset email could not be sent. Please try again later or contact support.']);
+    }
+
     public function test_customer_profile_still_uses_the_storefront_profile_page(): void
     {
         $customer = User::where('email', 'customer@artiva.test')->firstOrFail();
@@ -72,23 +86,41 @@ class AuthTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_registration_creates_a_customer_account(): void
+    public function test_two_customers_register_in_the_active_database_and_can_log_in(): void
     {
-        $response = $this->post('/register', [
-            'name' => 'New Collector',
-            'email' => 'collector@example.com',
-            'phone' => '+1 555 0100',
+        $connection = config('database.default');
+        $accounts = [
+            ['name' => 'First Collector', 'email' => 'first.collector@example.com'],
+            ['name' => 'Second Collector', 'email' => 'second.collector@example.com'],
+        ];
+        $ids = [];
+
+        foreach ($accounts as $account) {
+            $this->post('/register', [
+                ...$account,
+                'phone' => '+1 555 0100',
+                'password' => 'Password123',
+                'password_confirmation' => 'Password123',
+            ])->assertRedirect('/');
+
+            $user = User::query()->where('email', $account['email'])->firstOrFail();
+            $this->assertSame(User::ROLE_CUSTOMER, $user->role);
+            $this->assertSame($connection, $user->getConnection()->getName());
+            $this->assertSame('+1 555 0100', $user->phone);
+            $this->assertTrue(Hash::check('Password123', $user->password));
+            $ids[] = $user->id;
+
+            $this->post('/logout')->assertRedirect('/');
+        }
+
+        $this->assertNotSame($ids[0], $ids[1]);
+        $this->assertDatabaseCount('users', 7);
+
+        $this->post('/login', [
+            'email' => $accounts[1]['email'],
             'password' => 'Password123',
-            'password_confirmation' => 'Password123',
-        ]);
-
-        $response->assertRedirect('/');
-        $this->assertAuthenticated();
-
-        $user = User::where('email', 'collector@example.com')->firstOrFail();
-        $this->assertSame(User::ROLE_CUSTOMER, $user->role);
-        $this->assertSame('+1 555 0100', $user->phone);
-        $this->assertTrue(Hash::check('Password123', $user->password));
+        ])->assertRedirect();
+        $this->assertAuthenticatedAs(User::where('email', $accounts[1]['email'])->firstOrFail());
     }
 
     public function test_admin_can_open_the_dashboard(): void

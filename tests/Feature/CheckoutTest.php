@@ -82,8 +82,42 @@ class CheckoutTest extends TestCase
         $this->assertDatabaseHas('payments', [
             'order_id' => $order->id,
             'status' => Order::PAYMENT_PENDING,
-            'transaction_id' => null,
+            'provider_reference' => 'GCASH-TEST-12345',
         ]);
+
+        $payment = $order->payments()->firstOrFail();
+        $this->assertNotEmpty($payment->transaction_id);
+    }
+
+    public function test_checkout_rejects_a_provider_reference_already_used_by_another_payment(): void
+    {
+        $customer = $this->customer();
+        $artwork = Artwork::query()->active()->latest()->firstOrFail();
+        $reference = 'GCASH-DUPLICATE-TEST';
+
+        $this->actingAs($customer)->post('/cart/'.$artwork->slug);
+        $this->actingAs($customer)->post('/checkout', [
+            'billing_name' => $customer->name,
+            'billing_email' => $customer->email,
+            'payment_method' => 'gcash',
+            'payment_reference' => $reference,
+            'terms' => '1',
+        ])->assertRedirect();
+
+        $this->actingAs($customer)->post('/cart/'.$artwork->slug);
+        $this->actingAs($customer)
+            ->from('/checkout')
+            ->post('/checkout', [
+                'billing_name' => $customer->name,
+                'billing_email' => $customer->email,
+                'payment_method' => 'gcash',
+                'payment_reference' => $reference,
+                'terms' => '1',
+            ])
+            ->assertRedirect('/checkout')
+            ->assertSessionHasErrors('payment_reference');
+
+        $this->assertDatabaseCount('orders', 7);
     }
 
     public function test_checkout_requires_billing_details(): void

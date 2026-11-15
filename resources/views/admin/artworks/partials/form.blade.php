@@ -20,8 +20,16 @@
     </div>
 
     <div>
-        <label class="form-label" for="artist_name">Artist name</label>
-        <input class="form-control" type="text" id="artist_name" name="artist_name" value="{{ old('artist_name', $artwork->artist_name) }}" required maxlength="120" placeholder="Who made this piece?">
+        <label class="form-label" for="artist_id">Artist</label>
+        <select class="form-select" id="artist_id" name="artist_id" required>
+            <option value="">Choose an artist</option>
+            @foreach ($artists as $artist)
+                <option value="{{ $artist->id }}" @selected(old('artist_id', $artwork->artist_id) == $artist->id)>{{ $artist->name }}</option>
+            @endforeach
+        </select>
+        @if ($artists->isEmpty())
+            <p class="form-text">Create an artist profile before adding artwork.</p>
+        @endif
     </div>
 
     <div class="form-grid__full">

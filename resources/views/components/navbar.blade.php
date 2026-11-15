@@ -11,6 +11,7 @@
         <nav class="site-nav" id="siteNav" aria-label="Main navigation">
             <a class="site-nav__link {{ request()->routeIs('home') ? 'is-active' : '' }}" href="{{ route('home') }}">Home</a>
             <a class="site-nav__link {{ request()->routeIs('artworks.*') ? 'is-active' : '' }}" href="{{ route('artworks.index') }}">Explore</a>
+            <a class="site-nav__link {{ request()->routeIs('artists.*') ? 'is-active' : '' }}" href="{{ route('artists.index') }}">Artists</a>
 
             <div class="site-nav__dropdown">
                 <button class="site-nav__link site-nav__link--button" type="button" data-bs-toggle="dropdown" aria-expanded="false">

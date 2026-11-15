@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Artwork;
+use App\Models\Artist;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -83,6 +84,10 @@ class ArtworkSeeder extends Seeder
 
         foreach ($artworks as $index => [$title, $categoryName, $artist, $price, $description, $image]) {
             $category = Category::where('name', $categoryName)->firstOrFail();
+            $artistProfile = Artist::firstOrCreate(
+                ['name' => $artist],
+                ['slug' => Artist::uniqueSlug($artist)],
+            );
             $slug = Str::slug($title);
             $palette = $this->palette($index);
 
@@ -111,8 +116,8 @@ class ArtworkSeeder extends Seeder
                 ['slug' => $slug],
                 [
                     'category_id' => $category->id,
+                    'artist_id' => $artistProfile->id,
                     'title' => $title,
-                    'artist_name' => $artist,
                     'description' => $description.' Delivered as a high-resolution file with a personal-use licence.',
                     'preview_path' => $previewPath,
                     'file_path' => $masterPath,

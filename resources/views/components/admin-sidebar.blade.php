@@ -5,6 +5,7 @@
         ]],
         ['label' => 'Catalogue', 'items' => [
             ['route' => 'admin.artworks.index', 'label' => 'Artworks', 'icon' => 'bi-images', 'match' => 'admin.artworks.*'],
+            ['route' => 'admin.artists.index', 'label' => 'Artists', 'icon' => 'bi-person-badge', 'match' => 'admin.artists.*'],
             ['route' => 'admin.categories.index', 'label' => 'Categories', 'icon' => 'bi-tags', 'match' => 'admin.categories.*'],
         ]],
         ['label' => 'Sales', 'items' => [

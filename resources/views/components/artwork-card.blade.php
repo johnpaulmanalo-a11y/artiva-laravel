@@ -52,7 +52,7 @@
 
     <div class="art-card__body">
         <div class="art-card__meta">
-            <span class="art-card__artist">{{ $artwork->artist_name }}</span>
+            <a class="art-card__artist" href="{{ route('artists.show', $artwork->artist) }}">{{ $artwork->artist->name }}</a>
             <span class="art-card__price">{{ number_format((float) $artwork->price, 2) }}</span>
         </div>
 
