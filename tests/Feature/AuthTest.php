@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Mail\RegistrationSuccessful;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -43,6 +45,8 @@ class AuthTest extends TestCase
 
     public function test_registration_creates_a_customer_account(): void
     {
+        Mail::fake();
+
         $response = $this->post('/register', [
             'name' => 'New Collector',
             'email' => 'collector@example.com',
@@ -56,6 +60,11 @@ class AuthTest extends TestCase
         $user = User::where('email', 'collector@example.com')->firstOrFail();
         $this->assertSame(User::ROLE_CUSTOMER, $user->role);
         $this->assertTrue(Hash::check('Password123', $user->password));
+        Mail::assertSent(RegistrationSuccessful::class, function (RegistrationSuccessful $mail) use ($user): bool {
+            return $mail->hasTo($user->email)
+                && $mail->user->is($user)
+                && str_contains($mail->render(), 'successfully registered');
+        });
     }
 
     public function test_admin_can_open_the_dashboard(): void

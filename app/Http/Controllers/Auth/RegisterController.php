@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RegistrationSuccessful;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
+use Throwable;
+
+
 
 class RegisterController extends Controller
 {
@@ -35,6 +41,14 @@ class RegisterController extends Controller
             'password' => $data['password'],
             'role' => User::ROLE_CUSTOMER,
         ]);
+
+        try {
+            Mail::to($user->email)->send(new RegistrationSuccessful($user));
+        } catch (Throwable $e) {
+            Log::error('Registration confirmation email failed: '.$e->getMessage(), [
+                'user_id' => $user->id,
+            ]);
+        }
 
         Auth::login($user);
 

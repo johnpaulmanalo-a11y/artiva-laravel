@@ -108,6 +108,9 @@ return [
     |
     */
 
+    // Dito papasok ang mga message galing sa contact form.
+    'contact_to' => env('CONTACT_MAIL_TO', env('MAIL_FROM_ADDRESS')),
+
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
